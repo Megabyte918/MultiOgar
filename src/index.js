@@ -20,7 +20,7 @@ process.on('uncaughtException', function (err) {
     process.exit(1);
 });
 
-Logger.info("\u001B[1m\u001B[32mMultiOgar " + pjson.version + "\u001B[37m - An open source multi-protocol ogar server\u001B[0m");
+Logger.info("\u001B[1m\u001B[32mOgar-Remastered " + pjson.version + "\u001B[37m - A New Era Of Ogar\u001B[0m");
 
 
 // Handle arguments

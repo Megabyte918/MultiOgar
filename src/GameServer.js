@@ -85,8 +85,8 @@ function GameServer() {
         serverChat: 1,              // Set to 1 to allow chat; 0 to disable chat.
         serverChatAscii: 1,         // Set to 1 to disable non-ANSI letters in the chat (english only mode)
         
-        serverName: 'MultiOgar #1', // Server name
-        serverWelcome1: 'Welcome to MultiOgar server!',      // First server welcome message
+        serverName: 'Ogar Server', // Server name
+        serverWelcome1: 'Welcome To Ogar-Remastered '+ pjson.version,      // First server welcome message
         serverWelcome2: '',         // Second server welcome message (for info, etc)
         
         borderWidth: 14142,         // Map border size (Vanilla value: 14142)
@@ -171,7 +171,6 @@ GameServer.prototype.start = function () {
         this.httpServer = HttpsServer.createServer(options);
     } else {
         // HTTP only
-        Logger.warn("TLS: not supported (SSL certificate not found!)");
         this.httpServer = http.createServer();
     }
     var wsOptions = {
@@ -1483,7 +1482,7 @@ GameServer.prototype.loadBadWords = function () {
             words = words.map(function (arg) { return arg.trim().toLowerCase(); });
             words = words.filter(function (arg) { return !!arg; });
             this.badWords = words;
-            Logger.info(this.badWords.length + " bad words loaded");
+            Logger.info(this.badWords.length + " Banned Words Loaded");
         }
     } catch (err) {
         Logger.error(err.stack);
@@ -1540,11 +1539,6 @@ GameServer.prototype.loadUserList = function () {
                 list.splice(i, 1);
                 continue;
             }
-            if (!item.password || !item.password.trim()) {
-                Logger.warn("User account \"" + item.name + "\" disabled");
-                list.splice(i, 1);
-                continue;
-            }
             if (item.ip) {
                 item.ip = item.ip.trim();
             }
@@ -1588,7 +1582,7 @@ GameServer.prototype.loadIpBanList = function () {
             this.ipBanList = fs.readFileSync(fileNameIpBan, "utf8").split(/[\r\n]+/).filter(function (x) {
                 return x != ''; // filter empty lines
             });
-            Logger.info(this.ipBanList.length + " IP ban records loaded.");
+            Logger.info("IP ban records loaded.");
         } else {
             Logger.warn(fileNameIpBan + " is missing.");
         }
@@ -1816,7 +1810,7 @@ GameServer.prototype.pingServerTracker = function () {
         uptime: process.uptime() >>> 0,             // [mandatory] server uptime [seconds]
         w: this.border.width >>> 0,                 // [mandatory] map border width [integer]
         h: this.border.height >>> 0,                // [mandatory] map border height [integer]
-        version: 'MultiOgar ' + pjson.version,      // [optional]  server version
+        version: 'Ogar Remastered ' + pjson.version,      // [optional]  server version
         stpavg: this.updateTimeAvg >>> 0,           // [optional]  average server loop time
         chat: this.config.serverChat ? 1 : 0,       // [optional]  0 - chat disabled, 1 - chat enabled
         os: os.platform()                           // [optional]  operating system
@@ -1841,7 +1835,7 @@ GameServer.prototype.pingServerTracker = function () {
                '&name=Unnamed Server' +                 // we cannot use it, because other value will be used as dns name
                '&opp=' + os.platform() + ' ' + os.arch() + // "win32 x64"
                '&uptime=' + process.uptime() +          // Number of seconds server has been running
-               '&version=MultiOgar ' + pjson.version +
+               '&version=Ogar-Remastered ' + pjson.version +
                '&start_time=' + this.startTime;
     trackerRequest({
         host: 'ogar.mivabe.nl',
@@ -1862,7 +1856,7 @@ GameServer.prototype.pingServerTracker = function () {
 function trackerRequest(options, type, body) {
     if (options.headers == null)
         options.headers = {};
-    options.headers['user-agent'] = 'MultiOgar' + pjson.version;
+    options.headers['user-agent'] = 'Ogar Remastered' + pjson.version;
     options.headers['content-type'] = type;
     options.headers['content-length'] = body == null ? 0 : Buffer.byteLength(body, 'utf8');
     var req = http.request(options, function (res) {

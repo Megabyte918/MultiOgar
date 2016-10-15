@@ -1,6 +1,0 @@
-web:
-  build: .
-  ports:
-    - "8000:80"
-    - "8181:443"
-  command: node src/index.js

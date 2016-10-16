@@ -15,6 +15,7 @@ Ogar-Remastered code is based on MultiOgar
 * New Features (Gamemodes,User Bots,etc..)
 * Make Gameplay Smoother (Make Memory Usage At Least < 10%)
 * Maybe A Custom Client :)
+
 ## Ogar Server Tracker
 
 You Can Use http://ogar-tracker.tk/ To Find **Multiplayer Game Servers**

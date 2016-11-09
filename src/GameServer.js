@@ -85,7 +85,7 @@ function GameServer() {
         serverChat: 1,              // Set to 1 to allow chat; 0 to disable chat.
         serverChatAscii: 1,         // Set to 1 to disable non-ANSI letters in the chat (english only mode)
         
-        serverName: 'MultiOgar #1', // Server name
+        serverName: 'Ogar-remastered #1', // Server name
         serverWelcome1: 'Welcome to MultiOgar server!',      // First server welcome message
         serverWelcome2: '',         // Second server welcome message (for info, etc)
         

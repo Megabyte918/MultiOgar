@@ -165,8 +165,9 @@ LMS.prototype.onTick = function (gameServer) {
     } else {
         this.tickMotherUpdate++
     }
-    var time = Math.floor((Math.Random() * 180000) + 60000); // 1 min - 3 min
-    var interval = SetInterval(function() {LMSFunction()}, time); // 3600000 = 1 hour for future reference
+    var time = Math.floor((Math.Random() * 3600000) + 7200000); // 1 hour - 2 hour
+    //60000 milliseconds is one minute
+    var interval = SetInterval(function() {LMSFunction()}, time);
 
 };
 

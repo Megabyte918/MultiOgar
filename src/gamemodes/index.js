@@ -6,6 +6,7 @@ module.exports = {
     Tournament: require('./Tournament'),
     HungerGames: require('./HungerGames'),
     Rainbow: require('./Rainbow'),
+    LMS: require('./LMS'),
 };
 
 var get = function (id) {
@@ -26,7 +27,7 @@ var get = function (id) {
         case 5: // Rainbow
             mode = new module.exports.Rainbow();
             break;
-         case 6: // LMS
+        case 21: // LMS
          	mode = new module.exports.LMS();
          	break;
         default: // FFA is default

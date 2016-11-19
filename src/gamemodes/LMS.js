@@ -1,14 +1,16 @@
 var FFA = require('./FFA'); // Base gamemode
 var Entity = require('../entity');
 var Logger = require('../modules/Logger');
-
-var LMS = function () {
+//LMS based gamemode
+//Experimental Mode
+function LMS () {
+    var StartofLMS = false;
 
 
     FFA.apply(this, Array.prototype.slice.call(arguments));
     
-    this.ID = 2;
-    this.name = "Experimental";
+    this.ID = 21;
+    this.name = "LMS";
     this.specByLeaderboard = true;
     
     // Gamemode Specific Variables
@@ -21,14 +23,16 @@ var LMS = function () {
     this.motherUpdateInterval = 2;     // How many ticks it takes to spawn mother food (1 second)
     this.motherMinAmount = 20;
     this.motherMaxAmount = 30;
+    this.contenders = [];
+    this.maxcontenders = 1500;
 }
 
-module.exports = Experimental;
-Experimental.prototype = new FFA();
+module.exports = LMS;
+LMS.prototype = new FFA();
 
 // Gamemode Specific Functions
 
-Experimental.prototype.spawnMotherCell = function (gameServer) {
+LMS.prototype.spawnMotherCell = function (gameServer) {
     // Checks if there are enough mother cells on the map
     if (this.nodesMother.length >= this.motherMinAmount) {
         return;
@@ -46,7 +50,7 @@ Experimental.prototype.spawnMotherCell = function (gameServer) {
 
 // Override
 
-Experimental.prototype.onServerInit = function (gameServer) {
+LMS.prototype.onServerInit = function (gameServer) {
     // Called when the server starts
     gameServer.run = true;
     
@@ -78,7 +82,7 @@ Experimental.prototype.onServerInit = function (gameServer) {
     };
 };
 
-Experimental.prototype.onChange = function (gameServer) {
+LMS.prototype.onChange = function (gameServer) {
     // Remove all mother cells
     for (var i in this.nodesMother) {
         gameServer.removeNode(this.nodesMother[i]);
@@ -90,7 +94,59 @@ Experimental.prototype.onChange = function (gameServer) {
     Entity.MotherCell.prototype.onRemove = require('../Entity/MotherCell').prototype.onRemove;
 };
 
-Experimental.prototype.onTick = function (gameServer) {
+LMS.prototype.onPlayerSpawn = function (gameServer, player) {
+    // Only spawn players if LMS hasnt started yet
+    if (StartofLMS == false) {
+        player.setColor(gameServer.getRandomColor()); // Random color
+        gameServer.spawnPlayer(player);
+        }
+    }
+};
+LMS.prototype.onCellRemove = function (cell) {
+    var owner = cell.owner,
+        human_just_died = false;
+    
+    if (owner.cells.length <= 0) {
+        // Remove from contenders list
+        var index = this.contenders.indexOf(owner);
+        if (index != -1) {
+            if ('_socket' in this.contenders[index].socket) {
+                human_just_died = true;
+            }
+            this.contenders.splice(index, 1);
+        }
+        
+        // Victory conditions
+        var humans = 0;
+        for (var i = 0; i < this.contenders.length; i++) {
+            if ('_socket' in this.contenders[i].socket) {
+                humans++;
+            }
+        }
+        
+        // the game is over if:
+        // 1) there is only 1 player left, OR
+        // 2) all the humans are dead, OR
+        // 3) the last-but-one human just died
+        if ((this.contenders.length == 1 || humans == 0 || (humans == 1 && human_just_died)) && this.gamePhase == 2) {
+            this.endGame(cell.owner.gameServer);
+        } else {
+            // Do stuff
+            this.onPlayerDeath(cell.owner.gameServer);
+        }
+    }
+};
+var LMSFunction = function (){
+
+    StartofLMS = true;
+    Logger.error("LMS HAS STARTED");
+};
+
+LMS.prototype.onPlayerDeath = function (gameServer){
+
+};
+
+LMS.prototype.onTick = function (gameServer) {
     // Mother Cell Spawning
     if (this.tickMotherSpawn >= this.motherSpawnInterval) {
         this.tickMotherSpawn = 0;
@@ -106,6 +162,7 @@ Experimental.prototype.onTick = function (gameServer) {
     } else {
         this.tickMotherUpdate++;
     }
-};
+    var time = Math.floor((Math.Random() * 180000) + 60000); // 1 min - 3 min
+    var interval = SetInterval(function() {LMSFunction()}, time); // 3600000 = 1 hour
 
-setInterval(function() {LMS()})
+};

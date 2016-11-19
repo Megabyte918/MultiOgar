@@ -104,7 +104,7 @@ LMS.prototype.onPlayerSpawn = function (gameServer, player) {
         gameServer.spawnPlayer(player);
         }
     };
-};
+}
 LMS.prototype.onCellRemove = function (cell) {
     var owner = cell.owner,
         human_just_died = false;

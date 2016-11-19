@@ -105,41 +105,7 @@ LMS.prototype.onPlayerSpawn = function (gameServer, player) {
         }
     };
 }
-LMS.prototype.onCellRemove = function (cell) {
-    var owner = cell.owner,
-        human_just_died = false;
-    
-    if (owner.cells.length <= 0) {
-        // Remove from contenders list
-        var index = this.contenders.indexOf(owner);
-        if (index != -1) {
-            if ('_socket' in this.contenders[index].socket) {
-                human_just_died = true;
-            }
-            this.contenders.splice(index, 1);
-        }
-        
-        // Victory conditions
-        var humans = 0;
-        for (var i = 0; i < this.contenders.length; i++) {
-            if ('_socket' in this.contenders[i].socket) {
-                humans++;
-            }
-        }
-        
-        // the game is over if:
-        // 1) there is only 1 player left, OR
-        // 2) all the humans are dead, OR
-        // 3) the last-but-one human just died
-        if ((this.contenders.length == 1 || humans == 0 || (humans == 1 && human_just_died)) && this.gamePhase == 2) {
-            this.endGame(cell.owner.gameServer);
-        } else {
-            // Do stuff
-            this.onPlayerDeath(cell.owner.gameServer);
-        }
-    }
-};
-var LMSFunction = function (){
+LMS.prototype.lmsFunction = function () {
 
     StartofLMS = true;
     Logger.info("LMS HAS STARTED");
@@ -169,7 +135,6 @@ LMS.prototype.onTick = function (gameServer) {
     var long = this.gameServer.config.lastManStandingLongest;
     var time = Math.floor((Math.Random() * long) + short);
     //1 minutes = 60000 milliseconds
-    var interval = SetInterval(function() {LMSFunction()}, time); // 3600000 = 1 hour for future reference
+    var interval = SetInterval(function() {LMS.prototype.lmsFunction()}, time); // 3600000 = 1 hour for future reference
 
 };
-

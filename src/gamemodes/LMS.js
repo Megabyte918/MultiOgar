@@ -3,6 +3,9 @@ var Entity = require('../entity');
 var Logger = require('../modules/Logger');
 //LMS based gamemode
 //Experimental Mode
+//After a set time interval the Server will not allow players to spawn and will only let them specate
+//Some time later, the Server will disconnect all players and restart the cycle.
+
 function LMS () {
     var StartofLMS = false;
 
@@ -96,11 +99,11 @@ LMS.prototype.onChange = function (gameServer) {
 
 LMS.prototype.onPlayerSpawn = function (gameServer, player) {
     // Only spawn players if LMS hasnt started yet
-    if (StartofLMS == false) {
+    if (StartofLMS = false) {
         player.setColor(gameServer.getRandomColor()); // Random color
         gameServer.spawnPlayer(player);
         }
-    }
+    };
 };
 LMS.prototype.onCellRemove = function (cell) {
     var owner = cell.owner,
@@ -139,7 +142,7 @@ LMS.prototype.onCellRemove = function (cell) {
 var LMSFunction = function (){
 
     StartofLMS = true;
-    Logger.error("LMS HAS STARTED");
+    Logger.info("LMS HAS STARTED");
 };
 
 LMS.prototype.onPlayerDeath = function (gameServer){
@@ -152,7 +155,7 @@ LMS.prototype.onTick = function (gameServer) {
         this.tickMotherSpawn = 0;
         this.spawnMotherCell(gameServer);
     } else {
-        this.tickMotherSpawn++;
+        this.tickMotherSpawn++
     }
     if (this.tickMotherUpdate >= this.motherUpdateInterval) {
         this.tickMotherUpdate = 0;
@@ -160,9 +163,10 @@ LMS.prototype.onTick = function (gameServer) {
             this.nodesMother[i].onUpdate();
         }
     } else {
-        this.tickMotherUpdate++;
+        this.tickMotherUpdate++
     }
     var time = Math.floor((Math.Random() * 180000) + 60000); // 1 min - 3 min
-    var interval = SetInterval(function() {LMSFunction()}, time); // 3600000 = 1 hour
+    var interval = SetInterval(function() {LMSFunction()}, time); // 3600000 = 1 hour for future reference
 
 };
+

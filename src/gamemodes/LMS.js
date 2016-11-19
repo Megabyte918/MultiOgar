@@ -105,11 +105,28 @@ LMS.prototype.onPlayerSpawn = function (gameServer, player) {
         }
     };
 }
+    var short = this.gameServer.config.lastManStandingShortest;
+    var long = this.gameServer.config.lastManStandingLongest;
+    var time = Math.floor((Math.Random() * long) + short);
+       var kickingpeopletime = Math.floor((Math.Random() * 1800000 + this.gameServer.config.lastManStandingLongest) + 900000 + lastManStandingShortest); //Could be made into a config soon
+    var LMS_end_interval = SetInterval(function() {LMS.prototype.lmsKickingpeople()}, kickingpeopletime);
+    //1 minutes = 60000 milliseconds
+    var LMS_START_INTERVAL = SetInterval(function() {LMS.prototype.lmsFunction()}, time); // 3600000 = 1 hour for future reference
+
+    	LMS.prototype.lmsKickingpeople = function(){ 
+		while (this.cell.length > 0) {
+			this.gameServer.removeNode(this.cells[0])
+		}
+		    this.isRemoved = true;
+    	return;
+	};
 LMS.prototype.lmsFunction = function () {
 
     StartofLMS = true;
     Logger.info("LMS HAS STARTED");
+
 };
+
 
 LMS.prototype.onPlayerDeath = function (gameServer){
 
@@ -131,10 +148,6 @@ LMS.prototype.onTick = function (gameServer) {
     } else {
         this.tickMotherUpdate++
     }
-    var short = this.gameServer.config.lastManStandingShortest;
-    var long = this.gameServer.config.lastManStandingLongest;
-    var time = Math.floor((Math.Random() * long) + short);
-    //1 minutes = 60000 milliseconds
-    var interval = SetInterval(function() {LMS.prototype.lmsFunction()}, time); // 3600000 = 1 hour for future reference
+
 
 };

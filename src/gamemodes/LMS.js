@@ -74,19 +74,15 @@ LMS.prototype.onServerInit = function (gameServer) {
             Logger.error("Tried to remove a non existing virus!");
         }
     };
-    var short = gameServer.config.lastManStandingShortest * 60000;
-    var long = gameServer.config.lastManStandingLongest * 60000;
-    var shortkick = gameServer.config.lastManStandingKickShortest * 60000;
-    var longkick = gameServer.config.lastManStandingKickLongest * 60000;
-    var self = this;
-    var time = Math.floor((Math.random() * (long - short)) + short);
-    var kickingTime = Math.floor((Math.random() * (longkick - shortkick)) + shortkick);
+        var short = gameServer.config.lastManStandingShortest * 60000;
+        var long = gameServer.config.lastManStandingLongest * 60000;
+        var shortkick = gameServer.config.lastManStandingKickShortest * 60000;
+        var longkick = gameServer.config.lastManStandingKickLongest * 60000;
+        var self = this;
+        var time = Math.floor((Math.random() * (long - short)) + short);
+        var kickingTime = Math.floor((Math.random() * (longkick - shortkick)) + shortkick);
 	var endInt = setInterval(function() {self.lmsKick()}, kickingTime);
 	var startInt = setInterval(function() {self.lmsBegin()}, time);
-	//Debuging 
-	Logger.info(time / 1000);
-	Logger.info(kickingTime / 1000);
-	//Debuging
 };
 
 LMS.prototype.onChange = function (gameServer) {
@@ -114,7 +110,6 @@ LMS.prototype.onPlayerDeath = function (gameServer){
 };
 	
 LMS.prototype.lmsKick = function (gameServer, player) {
-    //gameServer.kickId(0);
     this.lmsStart = false;
     Logger.info("You can now join");
 };
@@ -123,11 +118,6 @@ LMS.prototype.lmsBegin = function () {
     this.lmsStart = true;
     Logger.info("LMS HAS STARTED!");
 };
-
-//if (!this.lmsStart) {
-  //Logger.info("LMS NOT ACTIVE");
-//};
-
 LMS.prototype.onTick = function (gameServer) {
     // Mother Cell Spawning
     if (this.tickMotherSpawn >= this.motherSpawnInterval) {

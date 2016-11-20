@@ -1,18 +1,13 @@
 var FFA = require('./FFA'); // Base gamemode
 var Entity = require('../entity');
 var Logger = require('../modules/Logger');
-//var gameServer = require('../gameServer.js');
-//LMS based gamemode
-//Experimental Mode
+//Experimental based gamemode
+//LMS or Last Man Standing
 //After a set time interval the Server will not allow players to spawn and will only let them specate
 //Some time later, the Server will disconnect all players and restart the cycle.
 
 function LMS () {
-    var StartofLMS = false;
-
-
     FFA.apply(this, Array.prototype.slice.call(arguments));
-    
     this.ID = 21;
     this.name = "LMS";
     this.specByLeaderboard = true;
@@ -29,6 +24,9 @@ function LMS () {
     this.motherMaxAmount = 30;
     this.contenders = [];
     this.maxcontenders = 1500;
+    
+    // Whether last man standing has started or not
+    this.lmsStart = false;
 }
 
 module.exports = LMS;
@@ -57,17 +55,9 @@ LMS.prototype.spawnMotherCell = function (gameServer) {
 LMS.prototype.onServerInit = function (gameServer) {
     // Called when the server starts
     gameServer.run = true;
-    
-    var mapSize = Math.max(gameServer.border.width, gameServer.border.height);
-    
-    // 7 mother cells for vanilla map size
-    //this.motherMinAmount = Math.ceil(mapSize / 2000);
-    //this.motherMaxAmount = this.motherMinAmount * 2;
-    
+
+    // Override for special virus mechanics
     var self = this;
-    // Override
-    
-    // Special virus mechanics
     Entity.Virus.prototype.onEat = function (prey) {
         // Pushes the virus
         var angle = prey.isMoving ? prey.boostDirection.angle : this.boostDirection.angle;
@@ -81,10 +71,21 @@ LMS.prototype.onServerInit = function (gameServer) {
         if (index != -1) {
             self.nodesMother.splice(index, 1);
         } else {
-            Logger.error("Experimental.onServerInit.MotherVirus.onRemove: Tried to remove a non existing virus!");
+            Logger.error("Tried to remove a non existing virus!");
         }
     };
-
+    var short = gameServer.config.lastManStandingShortest * 60000;
+    var long = gameServer.config.lastManStandingLongest * 60000;
+    var self = this;
+    var time = Math.floor((Math.random() * long ) + short);
+    var kickingTime = Math.floor(((Math.random() * 1800000) + long) + 900000 + short); //I use 18000 and 9000 for debuging
+	var endInt = setInterval(function() {self.lmsKick()}, kickingTime);
+	var startInt = setInterval(function() {self.lmsBegin()}, time);
+	//Debuging
+	Logger.info(time / 1000);
+	Logger.info(kickingTime / 1000);
+	//Debuging
+};
 
 LMS.prototype.onChange = function (gameServer) {
     // Remove all mother cells
@@ -100,37 +101,28 @@ LMS.prototype.onChange = function (gameServer) {
 
 LMS.prototype.onPlayerSpawn = function (gameServer, player) {
     // Only spawn players if LMS hasnt started yet
-    if (StartofLMS = false) {
-        player.setColor(gameServer.getRandomColor()); // Random color
+    if (!this.lmsStart) {
+        // Random color upon spawning
+        player.setColor(gameServer.getRandomColor()); 
         gameServer.spawnPlayer(player);
-        }
-    };
-}
-	var short = this.gameServer.config.lastManStandingShortest * 60000;
-    var long = this.gameServer.config.lastManStandingLongest * 60000;
-    var time = Math.floor((Math.Random() * long) + short);
-    var kickingpeopletime = Math.floor((Math.Random() * 1800000 + this.gameServer.config.lastManStandingLongest) + 900000 + lastManStandingShortest); //Could be made into a config soon
-    var LMS_end_interval = SetInterval(function() {LMS.prototype.lmsKickingpeople()}, kickingpeopletime);
-    //1 minutes = 60000 milliseconds
-    var LMS_START_INTERVAL = SetInterval(function() {LMS.prototype.lmsFunction()}, time); // 3600000 = 1 hour for future reference
+    }
+};
+	
+LMS.prototype.lmsKick = function (gameServer, player) { 
+    while (player.cells.length > 0) {
+        gameServer.removeNode(player.cells[0]);
+    }
+    player.isRemoved = true;
+    return;
+};
 
-    	LMS.prototype.lmsKickingpeople = function(){ 
-		while (this.cell.length > 0) {
-			this.gameServer.removeNode(this.cells[0])
-		}
-		    this.isRemoved = true;
-    	return;
-	};
-LMS.prototype.lmsFunction = function () {
-
-    StartofLMS = true;
-    Logger.info("LMS HAS STARTED");
-
+LMS.prototype.lmsBegin = function () {
+    this.lmsStart = true;
+    Logger.info("LMS HAS STARTED!");
 };
 
 
 LMS.prototype.onPlayerDeath = function (gameServer){
-
 };
 
 LMS.prototype.onTick = function (gameServer) {
@@ -149,6 +141,4 @@ LMS.prototype.onTick = function (gameServer) {
     } else {
         this.tickMotherUpdate++
     }
-
-
 };

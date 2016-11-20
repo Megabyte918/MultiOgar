@@ -27,7 +27,7 @@ var get = function (id) {
         case 5: // Rainbow
             mode = new module.exports.Rainbow();
             break;
-        case 21: // LMS
+        case 4: // LMS
          	mode = new module.exports.LMS();
          	break;
         default: // FFA is default

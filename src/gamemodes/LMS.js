@@ -77,7 +77,7 @@ LMS.prototype.onServerInit = function (gameServer) {
     var short = gameServer.config.lastManStandingShortest * 60000;
     var long = gameServer.config.lastManStandingLongest * 60000;
     var self = this;
-    var time = Math.floor((Math.random() * long ) + short);
+    var time = Math.floor((Math.random() * (long - short)) + short);
     var kickingTime = Math.floor(((Math.random() * 1800000) + long) + 900000 + short); //I use 18000 and 9000 for debuging
 	var endInt = setInterval(function() {self.lmsKick()}, kickingTime);
 	var startInt = setInterval(function() {self.lmsBegin()}, time);
@@ -109,11 +109,18 @@ LMS.prototype.onPlayerSpawn = function (gameServer, player) {
 };
 	
 LMS.prototype.lmsKick = function (gameServer, player) { 
-    while (player.cells.length > 0) {
-        gameServer.removeNode(player.cells[0]);
-    }
-    player.isRemoved = true;
-    return;
+        var count = 0;
+        for (var i = 0; i < gameServer.clients.length; i++) {
+            var playerTracker = gameServer.clients[i].playerTracker;
+            while (playerTracker.cells.length > 0) {
+                gameServer.removeNode(playerTracker.cells[0]);
+                count++;
+            }
+        }
+        gameServer.removeNode(0);
+        var timeoutLMS = gameServer.config.lastManStandingTimeout;
+        setTimeout(timeoutLMS / 1000);
+        this.lmsStart = false;
 };
 
 LMS.prototype.lmsBegin = function () {

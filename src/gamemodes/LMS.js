@@ -1,6 +1,7 @@
 var FFA = require('./FFA'); // Base gamemode
 var Entity = require('../entity');
 var Logger = require('../modules/Logger');
+//var gameServer = require('../gameServer.js');
 //LMS based gamemode
 //Experimental Mode
 //After a set time interval the Server will not allow players to spawn and will only let them specate
@@ -83,7 +84,7 @@ LMS.prototype.onServerInit = function (gameServer) {
             Logger.error("Experimental.onServerInit.MotherVirus.onRemove: Tried to remove a non existing virus!");
         }
     };
-};
+
 
 LMS.prototype.onChange = function (gameServer) {
     // Remove all mother cells
@@ -105,10 +106,10 @@ LMS.prototype.onPlayerSpawn = function (gameServer, player) {
         }
     };
 }
-    var short = this.gameServer.config.lastManStandingShortest;
-    var long = this.gameServer.config.lastManStandingLongest;
+	var short = this.gameServer.config.lastManStandingShortest * 60000;
+    var long = this.gameServer.config.lastManStandingLongest * 60000;
     var time = Math.floor((Math.Random() * long) + short);
-       var kickingpeopletime = Math.floor((Math.Random() * 1800000 + this.gameServer.config.lastManStandingLongest) + 900000 + lastManStandingShortest); //Could be made into a config soon
+    var kickingpeopletime = Math.floor((Math.Random() * 1800000 + this.gameServer.config.lastManStandingLongest) + 900000 + lastManStandingShortest); //Could be made into a config soon
     var LMS_end_interval = SetInterval(function() {LMS.prototype.lmsKickingpeople()}, kickingpeopletime);
     //1 minutes = 60000 milliseconds
     var LMS_START_INTERVAL = SetInterval(function() {LMS.prototype.lmsFunction()}, time); // 3600000 = 1 hour for future reference

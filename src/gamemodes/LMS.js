@@ -83,7 +83,7 @@ LMS.prototype.onServerInit = function (gameServer) {
     var kickingTime = Math.floor((Math.random() * (longkick - shortkick)) + shortkick);
 	var endInt = setInterval(function() {self.lmsKick()}, kickingTime);
 	var startInt = setInterval(function() {self.lmsBegin()}, time);
-	//Debuging
+	//Debuging 
 	Logger.info(time / 1000);
 	Logger.info(kickingTime / 1000);
 	//Debuging
@@ -110,19 +110,13 @@ LMS.prototype.onPlayerSpawn = function (gameServer, player) {
     }
 };
 	
-LMS.prototype.lmsKick = function (gameServer, player) { 
-        //var count = 0;
-        //for (var i = 0; i < gameServer.clients.length; i++) {
-            //var playerTracker = gameServer.clients[i].playerTracker;
-            //while (playerTracker.cells.length > 0) {
-              //  gameServer.removeNode(playerTracker.cells[0]);
-            //    count++;
-          //  }
-        //}
-        gameServer.removeNode(0);
-        var timeoutLMS = gameServer.config.lastManStandingTimeout;
-        //setTimeout(timeoutLMS / 1000);
-        this.lmsStart = false;
+LMS.prototype.onPlayerDeath = function (gameServer){
+};
+	
+LMS.prototype.lmsKick = function (gameServer, player) {
+    //gameServer.kickId(0);
+    this.lmsStart = false;
+    Logger.info("You can now join");
 };
 
 LMS.prototype.lmsBegin = function () {
@@ -130,9 +124,9 @@ LMS.prototype.lmsBegin = function () {
     Logger.info("LMS HAS STARTED!");
 };
 
-
-LMS.prototype.onPlayerDeath = function (gameServer){
-};
+//if (!this.lmsStart) {
+  //Logger.info("LMS NOT ACTIVE");
+//};
 
 LMS.prototype.onTick = function (gameServer) {
     // Mother Cell Spawning
@@ -140,7 +134,7 @@ LMS.prototype.onTick = function (gameServer) {
         this.tickMotherSpawn = 0;
         this.spawnMotherCell(gameServer);
     } else {
-        this.tickMotherSpawn++
+        this.tickMotherSpawn++;
     }
     if (this.tickMotherUpdate >= this.motherUpdateInterval) {
         this.tickMotherUpdate = 0;
@@ -148,6 +142,6 @@ LMS.prototype.onTick = function (gameServer) {
             this.nodesMother[i].onUpdate();
         }
     } else {
-        this.tickMotherUpdate++
+        this.tickMotherUpdate++;
     }
 };

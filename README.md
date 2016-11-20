@@ -130,6 +130,7 @@ vps.simonorj.com:24270 | Montreal | Instant Merge | https://redd.it/4mufge
 
 
 ## What's new:
+* New Gamemode. Last Man Standing. Gamemode 6
 * 1.3.4: Fixed minion bugs, reduced lag with/without them, added random skins feature, and more :)
 * 1.3.3: Moved files, fixed some bugs, improved popsplits, and added some new features for minions :)
 * 1.3.0: Added minions! With a few new features too :)

@@ -121,7 +121,7 @@ LMS.prototype.lmsKick = function (gameServer, player) {
         //}
         gameServer.removeNode(0);
         var timeoutLMS = gameServer.config.lastManStandingTimeout;
-        setTimeout(timeoutLMS / 1000);
+        //setTimeout(timeoutLMS / 1000);
         this.lmsStart = false;
 };
 

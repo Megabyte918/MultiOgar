@@ -130,6 +130,11 @@ function GameServer() {
         tourneyTimeLimit: 20,       // Time limit of the game, in minutes.
         tourneyAutoFill: 0,         // If set to a value higher than 0, the tournament match will automatically fill up with bots after this amount of seconds
         tourneyAutoFillPlayers: 1,  // The timer for filling the server with bots will not count down unless there is this amount of real players
+        lastManStandingShortest: 60, // Shortest amount of time possible before LMS happens in minutes
+        lastManStandingLongest: 120, // Longest amount of time possible before LMS happens in minutes
+        //lastManStandingTimeout: 5, // Set to 0 for no TimeOut between killing the last player and restarting LMS
+        lastManStandingKickShortest: 30, //Shortest amount of minutes till kicking time
+        lastManStandingKickLongest: 60, //Longest amount of minutes till kicking time 
     };
     this.ipBanList = [];
     this.minionTest = [];

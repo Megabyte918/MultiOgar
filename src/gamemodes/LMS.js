@@ -2,7 +2,7 @@ var FFA = require('./FFA'); // Base gamemode
 var Entity = require('../entity');
 var Logger = require('../modules/Logger');
 //Experimental based gamemode
-//LMS or Last Man Standing
+//LMS or "Last Man Standing"
 //After a set time interval the Server will not allow players to spawn and will only let them specate
 //Some time later, the Server will disconnect all players and restart the cycle.
 
@@ -19,7 +19,7 @@ function LMS () {
     
     // Config
     this.motherSpawnInterval = 25 * 5;  // How many ticks it takes to spawn another mother cell (5 seconds)
-    this.motherUpdateInterval = 2;     // How many ticks it takes to spawn mother food (1 second)
+    this.motherUpdateInterval = 2;      // How many ticks it takes to spawn mother food (1 second)
     this.motherMinAmount = 20;
     this.motherMaxAmount = 30;
     this.contenders = [];
@@ -74,15 +74,15 @@ LMS.prototype.onServerInit = function (gameServer) {
             Logger.error("Tried to remove a non existing virus!");
         }
     };
-        var short = gameServer.config.lastManStandingShortest * 60000;
-        var long = gameServer.config.lastManStandingLongest * 60000;
-        var shortkick = gameServer.config.lastManStandingKickShortest * 60000;
-        var longkick = gameServer.config.lastManStandingKickLongest * 60000;
-        var self = this;
-        var time = Math.floor((Math.random() * (long - short)) + short);
-        var kickingTime = Math.floor((Math.random() * (longkick - shortkick)) + shortkick);
-	var endInt = setInterval(function() {self.lmsKick()}, kickingTime);
-	var startInt = setInterval(function() {self.lmsBegin()}, time);
+    var short = gameServer.config.lastManStandingShortest * 60000;
+    var long = gameServer.config.lastManStandingLongest * 60000;
+    var shortkick = gameServer.config.lastManStandingKickShortest * 60000;
+    var longkick = gameServer.config.lastManStandingKickLongest * 60000;
+    var self = this;
+    var time = Math.floor((Math.random() * (long - short)) + short);
+    var kickingTime = Math.floor((Math.random() * (longkick - shortkick)) + shortkick);
+    var endInt = setInterval(function() {self.lmsKick()}, kickingTime);
+    var startInt = setInterval(function() {self.lmsBegin()}, time);
 };
 
 LMS.prototype.onChange = function (gameServer) {
@@ -118,6 +118,7 @@ LMS.prototype.lmsBegin = function () {
     this.lmsStart = true;
     Logger.info("LMS HAS STARTED!");
 };
+
 LMS.prototype.onTick = function (gameServer) {
     // Mother Cell Spawning
     if (this.tickMotherSpawn >= this.motherSpawnInterval) {

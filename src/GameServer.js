@@ -68,6 +68,7 @@ function GameServer() {
         serverSpectatorScale: 0.4,  // Scale (field of view) used for free roam spectators (low value leads to lags, vanilla=0.4, old vanilla=0.25)
         serverStatsPort: 88,        // Port for stats server. Having a negative number will disable the stats server.
         serverStatsUpdate: 60,      // Update interval of server stats in seconds
+        serverRestart: 60,          // Time until server auto restarts in minutes
         
         serverMaxLB: 10,            // Controls the maximum players displayed on the leaderboard.
         serverChat: 1,              // Set to 1 to allow chat; 0 to disable chat.
@@ -169,6 +170,8 @@ GameServer.prototype.start = function() {
     this.wsServer.on('connection', this.onClientSocketOpen.bind(this));
     this.httpServer.listen(this.config.serverPort, this.config.serverBind, this.onHttpServerOpen.bind(this));
     if (this.config.serverStatsPort > 0) this.startStatsServer(this.config.serverStatsPort);
+    this.time = this.config.serverRestart;
+    setTimeout(function(){process.exit(1);}, this.time * 60 * 1000);
 };
 
 GameServer.prototype.onHttpServerOpen = function() {

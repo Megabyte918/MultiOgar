@@ -1,3 +1,4 @@
-cls
-node ../src/index.js
-goto start
+:a
+	cls
+	node ../src/index.js
+	goto :a

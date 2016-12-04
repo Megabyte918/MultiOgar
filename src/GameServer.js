@@ -41,7 +41,7 @@ function GameServer() {
     
     // Main loop tick
     this.time = new Date();
-    this.startTime = this.time.now();
+    this.startTime = Date.now();
     this.stepDateTime = 0;
     this.timeStamp = 0;
     this.updateTime = 0;
@@ -677,8 +677,11 @@ GameServer.prototype.mainLoop = function() {
     if (((this.tickCounter + 7) & (25 - 1)) == 0) {
         // once per second
         this.updateLeaderboard();
-        if ((this.time.getTime() + (this.config.serverRestart * 3600000)) - Date.getTime()) / 1000)
+
+        var _temp = new Date();
+        if (((this.time.getTime() + (this.config.serverRestart * 3600000) - _temp.getTime()) / 1000) <= 1) {
             process.exit(1);
+        }
     }
     
     // ping server tracker

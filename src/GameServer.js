@@ -679,9 +679,8 @@ GameServer.prototype.mainLoop = function() {
         this.updateLeaderboard();
 
         var _temp = new Date();
-        if (((this.time.getTime() + (this.config.serverRestart * 3600000) - _temp.getTime()) / 1000) <= 1) {
+        if (((this.time.getTime() + (this.config.serverRestart * 3600000) - _temp.getTime()) / 1000) <= 1)
             process.exit(1);
-        }
     }
     
     // ping server tracker

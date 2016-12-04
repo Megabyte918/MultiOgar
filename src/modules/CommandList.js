@@ -1,6 +1,7 @@
 // Imports
 var GameMode = require('../gamemodes');
 var Logger = require('./Logger');
+var Entity = require('../entity');
 
 function Commands() {
     this.list = {}; // Empty
@@ -53,6 +54,7 @@ Commands.list = {
         console.log("| split [PlayerID] [Amount]    | Forces a player to split                  |");
         console.log("| tp [X] [Y]                   | Teleports player(s) to XY coordinates     |");
         console.log("| replace [PlayerID] [entity]  | Replaces a player with an entity          |");
+        console.log("| pop [PlayerID]               | Pops a player with a virus                |");
         console.log("|                                                                          |");
         console.log("|                          ----Server Commands----                         |");
         console.log("|                                                                          |");
@@ -895,7 +897,6 @@ Commands.list = {
         }
     },
     spawn: function (gameServer, split) {
-        var Entity = require('../entity');
         var ent = split[1];
         if (typeof ent == "undefined" || ent == "" || (ent != "virus" && ent != "food" && ent != "mothercell")) {
             Logger.warn("Please specify either virus, food, or mothercell");
@@ -943,7 +944,6 @@ Commands.list = {
         }
     },
     replace: function (gameServer, split) {
-        var Entity = require('../entity');
         var id = parseInt(split[1]);
         if (isNaN(id)) {
             Logger.warn("Please specify a valid player ID!");
@@ -975,6 +975,21 @@ Commands.list = {
                         console.log("Replaced " + client.getFriendlyName() + " with a mothercell");
                     }
                 }
+            }
+        }
+    },
+    pop: function (gameServer, split) {
+        var id = parseInt(split[1]);
+        if (isNaN(id)) {
+            Logger.warn("Please specify a valid player ID!");
+            return;
+        }
+        for (var i in gameServer.clients) {
+            if (gameServer.clients[i].playerTracker.pID == id) {
+                var client = gameServer.clients[i].playerTracker;
+                var virus = new Entity.Virus(gameServer, null, client.centerPos, gameServer.config.virusMinSize);
+                gameServer.addNode(virus);
+                console.log("Popped " + client.getFriendlyName());
             }
         }
     },

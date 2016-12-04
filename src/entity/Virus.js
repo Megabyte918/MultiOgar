@@ -44,26 +44,15 @@ Virus.prototype.onEaten = function (c) {
     else if (numSplits == 3) big = [c._mass/4,c._mass/4,c._mass/7];
     else if (numSplits == 4) big = [c._mass/5,c._mass/7,c._mass/8,c._mass/10];
     else {
-        var threshold = c._mass - numSplits * splitMass; // ckeck size of exploding
-        var mults = {                                    // random selection
-            v1: ((Math.random() * (4 - 3.8)) + 3.8),     // vanilla mult 1
-            v2: ((Math.random() * (3.8 - 3.7)) + 3.7),   // vanilla mult 2
-            v3: ((Math.random() * (3.7 - 3.33)) + 3.33), // vanilla mult 3
-            v4: ((Math.random() * (2.5 - 2.3)) + 2.3),   // second vanilla mult 1
-            v5: ((Math.random() * (2.3 - 2.25)) + 2.25), // second vanilla mult 2
-            v6: ((Math.random() * (2.25 - 2)) + 2),      // second vanilla mult 3
-        };
+        // ckeck size of exploding
+        var threshold = c._mass - numSplits * splitMass; 
         // Monotone explosion(s)
         if (threshold > 466) {
-            var exp = 0; // starting mult
-            if (Math.random() * 3 <= 1) exp = mults.v1;
-            if (Math.random() * 3 <= 2) exp = mults.v2;
-            if (Math.random() * 3 <= 3) exp = mults.v3;
+            // virus explosion multipliers
+            var exp = (Math.random() * (4 - 3)) + 3; 
             while (threshold / exp > 24) {
                 threshold /= exp;
-                if (Math.random() * 3 <= 1) exp = mults.v4;
-                if (Math.random() * 3 <= 2) exp = mults.v5;
-                if (Math.random() * 3 <= 3) exp = mults.v6;
+                exp = (Math.random() * (3 - 2)) + 2;
                 big.push(threshold >> 0);
             }
         }

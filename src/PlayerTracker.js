@@ -262,6 +262,7 @@ PlayerTracker.prototype.checkConnection = function () {
 };
 
 PlayerTracker.prototype.updateTick = function () {
+    if (this.isRemoved) return;
     this.socket.packetHandler.process();
     if (this.gameServer.clients.length > 800 && this.isMi) return;
     if (this.spectate) {

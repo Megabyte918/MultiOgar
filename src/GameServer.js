@@ -348,13 +348,6 @@ GameServer.prototype.setBorder = function(width, height) {
     };
 };
 
-GameServer.prototype.getRandomPosition = function() {
-    return {
-        x: (this.border.minx + this.border.width * Math.random()) >> 0,
-        y: (this.border.miny + this.border.height * Math.random()) >> 0
-    };
-};
-
 GameServer.prototype.getRandomColor = function() {
     var h = 360 * Math.random();
     var s = 248 / 255;
@@ -635,22 +628,10 @@ GameServer.prototype.mainLoop = function() {
                     return;
                 var manifold = self.checkCellCollision(cell1, cell2);
                 if (manifold == null) return;
-                if (cell1.cellType == 3 && cell2.cellType == 3) {
-                    // ejected/ejected
+                if (cell1.cellType == 3 && cell2.cellType == 3)
                     rigidCollisions.push({ cell1: cell1, cell2: cell2 });
-                    // add to moving nodes if needed
-                    if (!cell1.isMoving) {
-                        cell1.isMoving = true;
-                        self.movingNodes.push(cell1);
-                    }
-                    if (!cell2.isMoving) {
-                        cell2.isMoving = true;
-                        self.movingNodes.push(cell2);
-                    }
-                }
-                else {
+                else
                     eatCollisions.push({ cell1: cell1, cell2: cell2 });
-                }
             });
         }
         // resolve rigid body collisions
@@ -917,6 +898,13 @@ GameServer.prototype.resolveCollision = function(manifold) {
     this.removeNode(cell);
 };
 
+GameServer.prototype.getRandomPosition = function() {
+    return {
+        x: (this.border.minx + this.border.width * Math.random()) >> 0,
+        y: (this.border.miny + this.border.height * Math.random()) >> 0
+    };
+};
+
 GameServer.prototype.spawnCells = function() {
     var maxCount = this.config.foodMinAmount - this.nodesFood.length;
     var spawnCount = Math.min(maxCount, this.config.foodSpawnAmount);
@@ -1062,10 +1050,7 @@ GameServer.prototype.ejectMass = function(client) {
         return;
     for (var i = 0; i < client.cells.length; i++) {
         var cell = client.cells[i];
-        
-        if (!cell) {
-            continue;
-        }
+        if (!cell) continue;
         
         if (cell._size < this.config.playerMinSplitSize) {
             continue;

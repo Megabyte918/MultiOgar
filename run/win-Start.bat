@@ -1,2 +1,3 @@
+cls
 node ../src/index.js
-pause
+goto start

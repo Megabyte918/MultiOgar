@@ -40,7 +40,8 @@ function GameServer() {
     this.bots = new BotLoader(this);
     
     // Main loop tick
-    this.startTime = Date.now();
+    this.time = new Date();
+    this.startTime = this.time.now();
     this.stepDateTime = 0;
     this.timeStamp = 0;
     this.updateTime = 0;
@@ -68,6 +69,7 @@ function GameServer() {
         serverSpectatorScale: 0.4,  // Scale (field of view) used for free roam spectators (low value leads to lags, vanilla=0.4, old vanilla=0.25)
         serverStatsPort: 88,        // Port for stats server. Having a negative number will disable the stats server.
         serverStatsUpdate: 60,      // Update interval of server stats in seconds
+        serverRestart: 24,          // Hours until server restart
         
         serverMaxLB: 10,            // Controls the maximum players displayed on the leaderboard.
         serverChat: 1,              // Set to 1 to allow chat; 0 to disable chat.
@@ -675,6 +677,8 @@ GameServer.prototype.mainLoop = function() {
     if (((this.tickCounter + 7) & (25 - 1)) == 0) {
         // once per second
         this.updateLeaderboard();
+        if ((this.time.getTime() + (this.config.serverRestart * 3600000)) - Date.getTime()) / 1000)
+            process.exit(1);
     }
     
     // ping server tracker

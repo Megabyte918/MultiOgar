@@ -1,2 +1,8 @@
+@echo off
+cls
+:start
 node ../src/index.js
-pause
+@echo.
+@echo Restarting server...
+@echo.
+goto start

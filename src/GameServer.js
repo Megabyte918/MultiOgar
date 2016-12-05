@@ -659,7 +659,7 @@ GameServer.prototype.mainLoop = function() {
     }
     
     // ping server tracker
-    if (this.config.serverTracker && (this.tickCounter & (250 - 1)) == 0) {
+    if (this.config.serverTracker && (this.tickCounter & (750 - 1)) == 0) {
         // once per 30 seconds
         this.pingServerTracker();
     }

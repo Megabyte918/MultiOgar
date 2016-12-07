@@ -1,8 +1,14 @@
 @echo off
 cls
-:start
+:answer1
+exit
+:answer0
 node ../src/index.js
 @echo.
 @echo Restarting server...
 @echo.
-goto start
+IF ERRORLEVEL 1
+goto :answer0
+
+IF ERRORLEVEL 0
+goto :answer 1

@@ -1,2 +1,4 @@
-node ../src/index.js
-pause
+:a
+	cls
+	node ../src/index.js
+	goto :a

@@ -77,7 +77,7 @@ Commands.list = {
                     "│ status                       │ Get server status                         │\n"+
                     "│ debug                        │ Get/check node lengths                    │\n"+
                     "│ exit                         │ Stop the server                           │\n"+
-                    "| restart                      | Restarts the server                       |\n +
+                    "| restart                      | Restarts the server                       |\n"+
                     "│                                                                          │\n"+
                     "├──────────────────────────────────────────────────────────────────────────┤\n"+
                     '│         Psst! Do "shortcuts" for a list of command shortcuts!            │\n'+

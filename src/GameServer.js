@@ -40,6 +40,7 @@ function GameServer() {
     this.bots = new BotLoader(this);
     
     // Main loop tick
+    this.time = new Date();
     this.startTime = Date.now();
     this.stepDateTime = 0;
     this.timeStamp = 0;
@@ -69,6 +70,7 @@ function GameServer() {
         serverStatsPort: 88,        // Port for stats server. Having a negative number will disable the stats server.
         serverStatsUpdate: 60,      // Update interval of server stats in seconds
         mobilePhysics: 0,           // Whether or not the server uses mobile agar.io physics
+	serverRestartInterval: 24,  // Time Until Server Restarts in hours
         
         serverMaxLB: 10,            // Controls the maximum players displayed on the leaderboard.
         serverChat: 1,              // Set to 1 to allow chat; 0 to disable chat.
@@ -610,6 +612,9 @@ GameServer.prototype.mainLoop = function() {
     if (((this.tickCounter + 7) % 25) == 0) {
         // once per second
         this.updateLeaderboard();
+	     var _temp = new Date();
+             if (((this.time.getTime() + (this.config.serverRestartInterval * 3600000) - _temp.getTime()) / 1000) <= 1)
+             process.exit(3);
     }
     // ping server tracker
     if (this.config.serverTracker && (this.tickCounter % 250) == 0) {

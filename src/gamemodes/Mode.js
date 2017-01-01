@@ -18,8 +18,10 @@ Mode.prototype.onServerInit = function (gameServer) {
     if (gameServer.config.lastManStanding) {
         var short = 15 * 60000; // 15 Minutes
         var long = 60 * 60000; // 60 Minutes
+        var shortreset = 15 * 60000; // 15 Minutes
+        var longreset = 30 * 60000; // 30 Minutes
         var time = Math.floor((Math.random() * (long - short)) + short);
-        var resetTime = (Math.floor((Math.random() * (30 - 15)) + 15)) + time;
+        var resetTime = (Math.floor((Math.random() * (longreset - shortreset)) + shortreset)) + time;
         var startInt = setInterval(function() {self.lastManStandingstart()}, time);
         var endInt = setInterval(function() {self.lastManStandingend()}, resetTime);
     }

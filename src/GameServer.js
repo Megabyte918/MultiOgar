@@ -118,7 +118,8 @@ function GameServer() {
         playerRecombineTime: 30,    // Base time in seconds before a cell is allowed to recombine
         playerMaxNickLength: 15,    // Maximum nick length
         playerDisconnectTime: 60,   // The time in seconds it takes for a player cell to be removed after disconnection (If set to -1, cells are never removed)
-        
+        playerSplitVelocity : 0,    // Sets player split velocity | 0 = Default 
+     
         minionStartSize: 32,        // Start size of minions (mass = 32*32/100 = 10.24)
         minionMaxStartSize: 32,     // Maximum value of random start size for minions (set value higher than minionStartSize to enable)
         disableERTP: 1,             // Whether or not to disable ERTP controls for minions. (must use ERTPcontrol script in /scripts) (Set to 0 to enable)
@@ -741,8 +742,14 @@ GameServer.prototype.splitPlayerCell = function(client, parent, angle, mass, m) 
     
     // Create cell
     var newCell = new Entity.PlayerCell(this, client, pos, size2);
+    if (this.config.playerSplitVelocity === 0) {
     newCell.setBoost(780, angle);
-    
+    } 
+    if (this.config.playerSplitVelocity > 0) {
+
+         newCell.setBoost(this.config.playerSplitVelocity, angle);
+   
+    }
     // Add to node list
     this.addNode(newCell);
     return true;

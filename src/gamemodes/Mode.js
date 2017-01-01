@@ -16,6 +16,7 @@ Mode.prototype.onServerInit = function (gameServer) {
     // Called when the server starts
     gameServer.run = true;
     if (gameServer.config.lastManStanding) {
+        var self = this;
         var short = 15 * 60000; // 15 Minutes
         var long = 60 * 60000; // 60 Minutes
         var shortreset = 15 * 60000; // 15 Minutes

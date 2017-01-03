@@ -141,15 +141,15 @@ function writeLog(level, message) {
     if (level == LogLevelEnum.DEBUG)
         prefix = "[DEBUG]";
     else if (level == LogLevelEnum.INFO)
-        prefix = "[INFO ]";
+        prefix = "[INFO]";
     else if (level == LogLevelEnum.WARN)
-        prefix = "[WARN ]";
+        prefix = "[WARN]";
     else if (level == LogLevelEnum.ERROR)
         prefix = "[ERROR]";
     else if (level == LogLevelEnum.FATAL)
         prefix = "[FATAL]";
     else if (level == LogLevelEnum.NONE)
-        prefix = "[NONE ]";
+        prefix = "[NONE]";
     prefix += "[" + getTimeString() + "] ";
     
     writeQueue.push(prefix + message + EOL);

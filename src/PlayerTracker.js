@@ -65,6 +65,7 @@ function PlayerTracker(gameServer, socket) {
     this.customspeed = 0;
     this.rec = false;
     this.disableSpawn = false;
+    this.slither = false;
     
     // Minions
     this.miQ = 0;
@@ -484,6 +485,8 @@ PlayerTracker.prototype.pressQ = function () {
         }
         this.spectateTarget = null;
     }
+    this.slither = !this.slither;
+
 };
 
 PlayerTracker.prototype.getSpectateTarget = function () {

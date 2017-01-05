@@ -127,6 +127,7 @@ function GameServer() {
         serverMinions: 0,           // Amount of minions each player gets once they spawn
         defaultName: "minion",      // Default name for all minions if name is not specified using command
         collectPellets: 0,          // Enable collect pellets mode. To use just press P or Q. (Warning: this disables Q controls, so make sure that disableERT is 0)
+    	slithermode: 0,             //Enable Slither Mode. To use just press Q. (Warning: Change Disable Q to 1 or this will not work)
     };
     this.ipBanList = [];
     this.minionTest = [];
@@ -641,6 +642,50 @@ GameServer.prototype.updateMassDecay = function() {
         }
     }
 };
+GameServer.prototype.slitherEject = function (client) {
+    if (!this.canEjectMass(client) || client.frozen)
+        return;
+    for (var i = 0; i < client.cells.length; i++) {
+        var cell = client.cells[i];
+        
+        if (!cell || cell._size < this.config.playerMinSplitSize) {
+            continue;
+        }
+        
+        var dx = -client.mouse.x - -cell.position.x;
+        var dy = -client.mouse.y - -cell.position.y;
+        var dl = dx * dx + dy * dy;
+        if (dl > 1) {
+            dx /= Math.sqrt(dl);
+            dy /= Math.sqrt(dl);
+        } else {
+            dx = 1;
+            dy = 0;
+        }
+        
+        // Remove mass from parent cell first
+        var sizeLoss = 10
+        var sizeSquared = cell._sizeSquared - sizeLoss * sizeLoss;
+        cell.setSize(Math.sqrt(sizeSquared));
+        // Get starting position
+        var pos = {
+            x: cell.position.x + dx * cell._size,
+            y: cell.position.y + dy * cell._size
+        };
+        var angle = Math.atan2(dx, dy);
+        if (isNaN(angle)) angle = Math.PI / 2;
+        
+        // Randomize angle
+        angle += (Math.random() * 0.6) - 0.3;
+        
+        // Create cell
+        var mass = (Math.random() * (8 - 4)) + 4;
+            var food = new Entity.Food(this, null, pos, mass);
+        food.setColor(cell.color);
+        food.setBoost(780, angle);
+        this.addNode(food);
+    }
+};
 
 GameServer.prototype.updateRemerge = function(cell1, client) {
     // update remerge
@@ -689,8 +734,14 @@ GameServer.prototype.movePlayer = function(cell1, client) {
     }
     // get movement speed
     var d = Math.sqrt(squared);
-    var speed = cell1.getSpeed(d);
+    if (this.config.slithermode && client.slither) {
+    	var speed = cell1.getSpeed(d) * 2;
+        var self = this;
+        self.slitherEject(client);
+    }
+    else var speed = cell1.getSpeed(d);
     if (!speed) return; // avoid shaking
+
     // move player cells
     cell1.position.x += dx / d * speed;
     cell1.position.y += dy / d * speed;

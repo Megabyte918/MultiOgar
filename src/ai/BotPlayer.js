@@ -136,8 +136,11 @@ BotPlayer.prototype.decide = function (cell) {
     // Normalize the resulting vector
     result.normalize();
     // Set bot's mouse position
+	var x = cell.position.x + result.x * 800;
+	var y = cell.position.y + result.y * 800;
+	if (isNaN(x) || isNaN(y)) return;
     this.mouse = {
-        x: cell.position.x + result.x * 800,
-        y: cell.position.y + result.y * 800
+        x: x,
+        y: y
     };
 };

@@ -157,7 +157,7 @@ function GameServer() {
     var Gamemode = require('./gamemodes');
     this.gameMode = Gamemode.get(this.config.serverGamemode);
 	this.config.playerDecayRate *= this.gameMode.decayMod;
-	this.config._playerDecayRateHigh = this.config.playerDecayRate * 10;
+	this.config._playerDecayRateHigh = this.config.playerDecayCap === 0 ? this.config.playerDecayRate : this.config.playerDecayRate * 10;
 	this.config.playerSpeed *= 84.424; // Base speed
 }
 
@@ -730,8 +730,8 @@ GameServer.prototype.updateNodeQuad = function(node) {
 // Checks cells for collision
 GameServer.prototype.checkCellCollision = function(cell, check) {
     var r = cell._size + check._size;
-    var dx = ~~(check.position.x - cell.position.x);
-    var dy = ~~(check.position.y - cell.position.y);
+    var dx = check.position.x - cell.position.x;
+    var dy = check.position.y - cell.position.y;
     var squared = dx * dx + dy * dy;
     var d = Math.sqrt(squared); // distance
     var push = Math.min((r - d) / d, r - d);
@@ -773,13 +773,13 @@ GameServer.prototype.resolveRigidCollision = function(c) {
     if (c.d > c.r) return;
     // body impulse
     var m = c.cell1._mass + c.cell2._mass;
-    var m1 = ~~c.cell1._mass / m;
-    var m2 = ~~c.cell2._mass / m;
+    var m1 = c.cell1._mass / m;
+    var m2 = c.cell2._mass / m;
     // apply extrusion force
-    c.cell1.position.x -= ~~(c.push * c.dx * m2);
-    c.cell1.position.y -= ~~(c.push * c.dy * m2);
-    c.cell2.position.x += ~~(c.push * c.dx * m1);
-    c.cell2.position.y += ~~(c.push * c.dy * m1);
+    c.cell1.position.x -= c.push * c.dx * m2;
+    c.cell1.position.y -= c.push * c.dy * m2;
+    c.cell2.position.x += c.push * c.dx * m1;
+    c.cell2.position.y += c.push * c.dy * m1;
 };
 
 // Resolves rigid body collision for ejected mass
@@ -978,8 +978,8 @@ GameServer.prototype.splitCells = function(client) {
     }
     for (var i = 0; i < cellToSplit.length; i++) {
         var cell = cellToSplit[i];
-        var x = ~~(client.mouse.x - cell.position.x);
-        var y = ~~(client.mouse.y - cell.position.y);
+        var x = client.mouse.x - cell.position.x;
+        var y = client.mouse.y - cell.position.y;
         if (x * x + y * y < 1) {
             x = 1, y = 0;
         }

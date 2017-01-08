@@ -121,8 +121,9 @@ function GameServer() {
         playerRecombineTime: 30,    // Base time in seconds before a cell is allowed to recombine
         playerMaxNickLength: 15,    // Maximum nick length
         playerDisconnectTime: 60,   // Time in seconds before a disconnected player's cells are removed (Set to -1 to never remove)
+        mobilePhysics: 0,           // Whether or not to use mobile split physics
         
-        minionStartSize: 31.6227766017, // Start size of minions (mass = 32*32/100 = 10.24)
+	minionStartSize: 31.6227766017, // Start size of minions (mass = 32*32/100 = 10.24)
         minionMaxStartSize: 31.6227766017, // Maximum value of random start size for minions (set value higher than minionStartSize to enable)
         disableERTP: 1,             // Whether or not to disable ERTP controls for minions. (must use ERTPcontrol script in /scripts) (Set to 0 to enable)
         disableQ: 0,                // Whether or not to disable Q controls for minions. (Set 0 to enable)

@@ -48,6 +48,7 @@ function GameServer() {
     this.timerLoopBind = null;
     this.mainLoopBind = null;
     this.tickCounter = 0;
+	this.tickLeaderboard = 0;
     this.disableSpawn = false;
 	this.speedMult = 1;
 	this.pow = new Float64Array(32768); // Use a cache for Math.pow to increase performance
@@ -622,9 +623,11 @@ GameServer.prototype.mainLoop = function() {
         }
         this.gameMode.onTick(this);
         this.tickCounter += this.speedMult;
+		this.tickLeaderboard += this.speedMult;
     }
     this.updateClients();
-    if (((this.tickCounter + 7) % 25) == 0) {
+    if (this.tickLeaderboard > 25) {
+		this.tickLeaderboard = 0;
         // once per second
         this.updateLeaderboard();
     }

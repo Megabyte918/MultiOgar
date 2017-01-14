@@ -33,7 +33,7 @@ Commands.list = {
                     "│ playerlist                   │ Get list of players, bots, ID's, etc      │\n"+
                     "│ minion [PlayerID] [#] [name] │ Adds suicide minions to the server        │\n"+
                     "│ addbot [number]              │ Adds bots to the server                   │\n"+
-                    "│ kickbot [number]             │ Kick a number of bots                     │\n"+
+                    "│ kickbots [number]            │ Kick a number of bots                     │\n"+
                     "│ kick [PlayerID]              │ Kick player or bot by client ID           │\n"+
                     "│ kickall                      │ Kick all players and bots                 │\n"+
                     "│ kill [PlayerID]              │ Kill cell(s) by client ID                 │\n"+
@@ -97,7 +97,7 @@ Commands.list = {
                     "│ mn                          │ Alias for minion                           │\n"+
                     "│ f                           │ Alias for freeze                           │\n"+
                     "│ ab                          │ Alias for addbot                           │\n"+
-                    "│ kb                          │ Alias for kickbot                          │\n"+
+                    "│ kbs                         │ Alias for kickbot                          │\n"+
                     "│ c                           │ Alias for change                           │\n"+
                     "│ n                           │ Alias for name                             │\n"+
                     "│ rep                         │ Alias for replace                          │\n"+
@@ -252,23 +252,25 @@ Commands.list = {
             );
         }
     },
-    kickbot: function (gameServer, split) {
+    kickbots: function (gameServer, split) {
         var toRemove = parseInt(split[1]);
-        if (isNaN(toRemove)) {
-            toRemove = -1; // Kick all bots if user doesnt specify a number
-        }
-        if (toRemove < 1) {
-            Logger.warn("Invalid argument!");
-            return;
-        }
         var removed = 0;
         for (var i = 0; i < gameServer.clients.length; i++) {
             var socket = gameServer.clients[i];
             if (socket.isConnected !== null) continue;
             socket.close();
             removed++;
-            if (removed >= toRemove)
-                break;
+            if (removed >= toRemove) break;
+        }
+        if (isNaN(toRemove)) {
+            if (!removed) {
+                Logger.warn("Cannot find any bots");
+                return;
+            } else {
+                toRemove = -1; // Kick all bots if user doesnt specify a number
+                Logger.warn("Kicked all bots (" + removed + ")");
+                return;
+            }
         }
         if (!removed)
             Logger.warn("Cannot find any bots");
@@ -1067,8 +1069,8 @@ Commands.list = {
     ab: function (gameServer, split) { // Addbot
         Commands.list.addbot(gameServer, split); 
     },
-    kb: function (gameServer, split) { // Kickbot
-        Commands.list.kickbot(gameServer, split);
+    kbs: function (gameServer, split) { // Kickbot
+        Commands.list.kickbots(gameServer, split);
     },
     c: function (gameServer, split) { // Change
         Commands.list.change(gameServer, split);

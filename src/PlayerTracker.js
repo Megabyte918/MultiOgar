@@ -1,5 +1,6 @@
 var Packet = require('./packet');
 var BinaryWriter = require("./packet/BinaryWriter");
+var Entity = require('./entity');
 
 function PlayerTracker(gameServer, socket) {
     this.gameServer = gameServer;
@@ -23,6 +24,7 @@ function PlayerTracker(gameServer, socket) {
     this._scaleF = 1;
     this.isMassChanged = true;
     this.borderCounter = 0;
+	this.fakeMinions = [];
     
     this.tickLeaderboard = 0;
     this.team = 0;
@@ -273,7 +275,7 @@ PlayerTracker.prototype.updateTick = function () {
     // update viewbox
     var scale = this.getScale();
     scale = Math.max(scale, this.gameServer.config.serverMinScale);
-    this._scaleF += 0.1 * (scale - this._scaleF);
+    this._scaleF += Math.min(0.1 * this.gameServer.speedMult, 1) * (scale - this._scaleF);
     if (isNaN(this._scaleF)) this._scaleF = 1;
     var width = (this.gameServer.config.serverViewBaseX + 100) / this._scaleF;
     var height = (this.gameServer.config.serverViewBaseY + 100) / this._scaleF;
@@ -289,7 +291,40 @@ PlayerTracker.prototype.updateTick = function () {
         halfWidth: halfWidth,
         halfHeight: halfHeight
     };
-    
+	
+	// Update fake minions
+	if (!this.isMi) {
+	for (var i=0; i<this.fakeMinions.length;) {
+	var cell1 = this.fakeMinions[i];
+	if (cell1.isRemoved) {
+	this.fakeMinions.splice(i, 1);
+	} else {
+	var dx = this.mouse.x - cell1.position.x;
+    var dy = this.mouse.y - cell1.position.y;
+    var squared = dx * dx + dy * dy;
+    if (squared !== 0) {
+    // get movement speed
+    var d = Math.sqrt(squared);
+    var speed = this.gameServer.config.playerSpeed * this.gameServer.speedMult * this.gameServer.pow[cell1._size >> 0];
+	var move = Math.min(d, speed) / d;
+    // move player cells
+    cell1.position.x += dx * move;
+    cell1.position.y += dy * move;
+    cell1.checkBorder(this.gameServer.border);
+	this.gameServer.updateNodeQuad(cell1);
+	}
+	i++;
+	}
+	}
+	var spawnCount = this.gameServer.config.minionCollisionDisabled - this.fakeMinions.length;
+	for (var i=0; i<spawnCount; i++) {
+		var minion = new Entity.FakeMinion(this.gameServer, null, this.gameServer.randomPos(), (this.gameServer.config.minionStartSize + Math.random() * (this.gameServer.config.minionMaxStartSize - this.gameServer.config.minionStartSize)) * 0.999999999);
+		minion.setColor(this.gameServer.getRandomColor());
+		this.gameServer.addNode(minion);
+		this.fakeMinions.push(minion);
+	}
+    }
+	
     // update visible nodes
     this.viewNodes = [];
     if (!this.isMinion || !this.isMi) {

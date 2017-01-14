@@ -48,7 +48,11 @@ function GameServer() {
     this.timerLoopBind = null;
     this.mainLoopBind = null;
     this.tickCounter = 0;
+	this.tickLeaderboard = 0;
     this.disableSpawn = false;
+	this.speedMult = 1;
+	this.pow = new Float64Array(32768); // Use a cache for Math.pow to increase performance
+	for (var i=0; i<32768; i++) this.pow[i] = 1 / Math.pow(i, 0.449);
 
     // Config
     this.config = {
@@ -118,7 +122,8 @@ function GameServer() {
         playerStartSize: 31.6227766017, // Start size of the player cell. (vanilla: mass = val*val/100 = 10 mass)
         playerMaxCells: 16,         // Maximum cells a player is allowed to have.
         playerSpeed: 1,             // Player speed multiplier (1 = normal speed, 2 = twice the normal speed)
-        playerDecayRate: 0.998,     // Amount of player cell size lost per second
+        playerDecayRate: 0.00002,   // Amount of player cell size lost per second
+		_playerDecayRateHigh: 0.0002,
         playerDecayCap: 0,          // Maximum mass a cell can have before it's decayrate multiplies by 10. (0 to disable)
         playerRecombineTime: 30,    // Base time in seconds before a cell is allowed to recombine
         playerMaxNickLength: 15,    // Maximum nick length
@@ -132,6 +137,7 @@ function GameServer() {
         serverMinions: 0,           // Amount of minions each player gets once they spawn
         collectPellets: 0,          // Enable collect pellets mode. To use just press P or Q. (Warning: this disables Q controls, so make sure that disableERT is 0)
         defaultName: "minion",      // Default name for all minions if name is not specified using command (put <r> before the name for random skins!)
+		minionCollisionDisabled: 0, // Amount of minions with collision disabled each player gets once they spawn
     };
     this.ipBanList = [];
     this.minionTest = [];
@@ -151,6 +157,9 @@ function GameServer() {
     // Gamemodes
     var Gamemode = require('./gamemodes');
     this.gameMode = Gamemode.get(this.config.serverGamemode);
+	this.config.playerDecayRate *= this.gameMode.decayMod;
+	this.config._playerDecayRateHigh = this.config.playerDecayCap === 0 ? this.config.playerDecayRate : this.config.playerDecayRate * 10;
+	this.config.playerSpeed *= 84.424; // Base speed
 }
 
 module.exports = GameServer;
@@ -595,6 +604,8 @@ GameServer.prototype.mainLoop = function() {
                 this.moveCell(cell1);
                 this.movePlayer(cell1, client);
                 this.autoSplit(cell1, client);
+				// Mass decay
+				if (cell1._size > this.config.playerMinSize) cell1.setSize(Math.max(this.config.playerMinSize, cell1._size * (cell1._size > this.config.playerDecayCap ? (1 - this.config._playerDecayRateHigh * this.speedMult) : (1 - this.config.playerDecayRate * this.speedMult))));
                 this.updateNodeQuad(cell1);
                 // Scan for player cells collisions
                 this.quadTree.find(cell1.quadItem.bound, function (item) {
@@ -611,14 +622,12 @@ GameServer.prototype.mainLoop = function() {
             this.spawnCells(this.randomPos());
         }
         this.gameMode.onTick(this);
-        if (((this.tickCounter + 3) % 25) == 0) {
-            // once per second
-            this.updateMassDecay();
-        }
-        this.tickCounter++;
+        this.tickCounter += this.speedMult;
+		this.tickLeaderboard += this.speedMult;
     }
     this.updateClients();
-    if (((this.tickCounter + 7) % 25) == 0) {
+    if (this.tickLeaderboard > 25) {
+		this.tickLeaderboard = 0;
         // once per second
         this.updateLeaderboard();
     }
@@ -630,32 +639,7 @@ GameServer.prototype.mainLoop = function() {
     
     var tEnd = process.hrtime(tStart);
     this.updateTime = tEnd[0] * 1000 + tEnd[1] / 1000000;
-};
-
-
-GameServer.prototype.updateMassDecay = function() {
-    if (!this.config.playerDecayRate) return;
-    
-    // Loop through all player cells
-    for (var i = 0; i < this.clients.length; i++) {
-        var client = this.clients[i].playerTracker;
-        for (var j = 0; j < client.cells.length; j++) {
-            var cell = client.cells[j];
-            if (cell == null || cell.isRemoved) 
-                continue; // dont decay if removed
-            var size = cell._size;
-            if (size <= this.config.playerMinSize)
-                continue; // cant decay anymore
-            var rate = this.config.playerDecayRate;
-            var cap = this.config.playerDecayCap;
-            if (cap && cell._mass > cap) 
-                rate /= 1.01; // multiply decay if needed
-            var decay = rate * this.gameMode.decayMod;
-            size = Math.sqrt(size * size * decay);
-            size = Math.max(size, this.config.playerMinSize);
-            cell.setSize(size); // subtract size
-        }
-    }
+	this.speedMult = Math.max(this.updateTime / 40, 1);
 };
 
 GameServer.prototype.updateRemerge = function(cell1, client) {
@@ -678,8 +662,8 @@ GameServer.prototype.moveCell = function(cell1) {
         return;
     }
     // add speed and set position
-    var speed = cell1.boostDistance / 9; // val: 87
-    cell1.boostDistance -= speed; // decays from speed
+    var speed = cell1.boostDistance / 9 * this.speedMult; // val: 87
+    cell1.boostDistance -= Math.min(cell1.boostDistance, speed); // decays from speed
     cell1.position.x += cell1.boostDirection.x * speed;
     cell1.position.y += cell1.boostDirection.y * speed;
     
@@ -697,19 +681,17 @@ GameServer.prototype.movePlayer = function(cell1, client) {
         return;
     // TODO: use vector for distance(s)
     // get distance
-    var dx = ~~(client.mouse.x - cell1.position.x);
-    var dy = ~~(client.mouse.y - cell1.position.y);
+    var dx = client.mouse.x - cell1.position.x;
+    var dy = client.mouse.y - cell1.position.y;
     var squared = dx * dx + dy * dy;
-    if (squared < 1 || isNaN(dx) || isNaN(dy)) {
-        return;
-    }
+    if (squared === 0) return;
     // get movement speed
     var d = Math.sqrt(squared);
-    var speed = cell1.getSpeed(d);
-    if (!speed) return; // avoid shaking
+    var speed = this.config.playerSpeed * this.speedMult * this.pow[cell1._size >> 0];
+	var move = Math.min(d, speed) / d;
     // move player cells
-    cell1.position.x += dx / d * speed;
-    cell1.position.y += dy / d * speed;
+    cell1.position.x += dx * move;
+    cell1.position.y += dy * move;
     cell1.checkBorder(this.border);
 };
 
@@ -754,8 +736,8 @@ GameServer.prototype.updateNodeQuad = function(node) {
 // Checks cells for collision
 GameServer.prototype.checkCellCollision = function(cell, check) {
     var r = cell._size + check._size;
-    var dx = ~~(check.position.x - cell.position.x);
-    var dy = ~~(check.position.y - cell.position.y);
+    var dx = check.position.x - cell.position.x;
+    var dy = check.position.y - cell.position.y;
     var squared = dx * dx + dy * dy;
     var d = Math.sqrt(squared); // distance
     var push = Math.min((r - d) / d, r - d);
@@ -797,13 +779,13 @@ GameServer.prototype.resolveRigidCollision = function(c) {
     if (c.d > c.r) return;
     // body impulse
     var m = c.cell1._mass + c.cell2._mass;
-    var m1 = ~~c.cell1._mass / m;
-    var m2 = ~~c.cell2._mass / m;
+    var m1 = c.cell1._mass / m;
+    var m2 = c.cell2._mass / m;
     // apply extrusion force
-    c.cell1.position.x -= ~~(c.push * c.dx * m2);
-    c.cell1.position.y -= ~~(c.push * c.dy * m2);
-    c.cell2.position.x += ~~(c.push * c.dx * m1);
-    c.cell2.position.y += ~~(c.push * c.dy * m1);
+    c.cell1.position.x -= c.push * c.dx * m2;
+    c.cell1.position.y -= c.push * c.dy * m2;
+    c.cell2.position.x += c.push * c.dx * m1;
+    c.cell2.position.y += c.push * c.dy * m1;
 };
 
 // Resolves rigid body collision for ejected mass
@@ -836,7 +818,7 @@ GameServer.prototype.resolveCollision = function(manifold) {
         if (cell.getAge() < 13 || check.getAge() < 13)
             return; // just splited => ignore
     } else {
-        if (check._size < cell._size * 1.15) return; // size check
+        if (check._size < cell._size * 1.15 && cell.cellType !== 4) return; // Size check is disabled for fake minions to make teaming with minions easier when they're enabled.
         if (!check.canEat(cell)) return; // cell refuses to be eaten
     }
     // Now maxCell can eat minCell
@@ -1002,8 +984,8 @@ GameServer.prototype.splitCells = function(client) {
     }
     for (var i = 0; i < cellToSplit.length; i++) {
         var cell = cellToSplit[i];
-        var x = ~~(client.mouse.x - cell.position.x);
-        var y = ~~(client.mouse.y - cell.position.y);
+        var x = client.mouse.x - cell.position.x;
+        var y = client.mouse.y - cell.position.y;
         if (x * x + y * y < 1) {
             x = 1, y = 0;
         }
@@ -1114,8 +1096,6 @@ GameServer.prototype.loadConfig = function() {
         Logger.error(err.stack);
         Logger.error("Failed to load " + fileNameConfig + ": " + err.message);
     }
-    // check config (min player size = 32 => mass = 10.24)
-    this.config.playerMinSize = Math.max(32, this.config.playerMinSize);
     Logger.setVerbosity(this.config.logVerbosity);
     Logger.setFileVerbosity(this.config.logFileVerbosity);
 };

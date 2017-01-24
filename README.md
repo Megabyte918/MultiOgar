@@ -1,6 +1,8 @@
 # MultiOgar - Edited
 Ogar game server with fast and smooth vanilla physics and multi-protocol support.
 
+test
+
 Since Barbosik stopped working on the original MultiOgar, I decided to continue it on this fork =D
 
 Current version: **1.5.0**

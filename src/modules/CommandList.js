@@ -849,7 +849,9 @@ Commands.list = {
             Logger.print("Please specify a valid player ID!");
             return;
         }
-    } catch ("Please check your Sytanx!");
+    } catch (error) {
+       Logger.warn("Please check your Sytanx!")
+    }
 
         for (var i in gameServer.clients) {
             if (gameServer.clients[i].playerTracker.pID == id) {

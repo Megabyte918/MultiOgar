@@ -135,6 +135,7 @@ Commands.list = {
         Commands.list.killall(gameServer, split);
     },
     minion: function(gameServer, split) {
+        try {
         var id = parseInt(split[1]);
         var add = parseInt(split[2]);
         var name = split.slice(3, split.length).join(' ');
@@ -166,14 +167,23 @@ Commands.list = {
                     Logger.print("Added " + add + " minions for " + getName(client._name));
                 }
                 break;
+                }
             }
+        } catch (error) {
+            Logger.warn("PLEASE USE A VALID NUMBER!");
+            return;
         }
     },
     addbot: function(gameServer, split) {
+        try {
         var add = parseInt(split[1]);
         if (isNaN(add)) {
             add = 1; // Adds 1 bot if user doesnt specify a number
         }
+    } catch (error) {
+        Logger.warn("PLEASE USE A VALID NUMBER!");
+        return;
+    }
         
         for (var i = 0; i < add; i++) {
             gameServer.bots.addBot();
@@ -181,15 +191,9 @@ Commands.list = {
         Logger.print("Added " + add + " player bots");
     },
     ban: function(gameServer, split) {
+        try {
         // Error message
-        var logInvalid = "Please specify a valid player ID or IP address!";
-        
-        if (split[1] === null) {
-            // If no input is given; added to avoid error
-            Logger.warn(logInvalid);
-            return;
-        }
-        
+                
         if (split[1].indexOf(".") >= 0) {
             // If input is an IP address
             var ip = split[1];
@@ -236,6 +240,10 @@ Commands.list = {
         }
         if (ip) ban(gameServer, split, ip);
         else Logger.warn("Player ID " + id + " not found!");
+        } catch (error) {
+            Logger.info(error.message);
+            return;
+        }
     },
     banlist: function(gameServer, split) {
         Logger.print("Showing " + gameServer.ipBanList.length + " banned IPs: ");
@@ -249,11 +257,16 @@ Commands.list = {
         }
     },
     kickbot: function(gameServer, split) {
+        try {
         var toRemove = parseInt(split[1]);
         if (isNaN(toRemove)) {
             // Kick all bots if user doesnt specify a number
             toRemove = gameServer.clients.length; 
         }
+    } catch (error) {
+        Logger.warn("PLEASE USE A VALID NUMBER!");
+        return;
+    }
         var removed = 0;
         for (var i = 0; i < gameServer.clients.length; i++) {
             if (gameServer.clients[i].isConnected != null) 
@@ -271,6 +284,7 @@ Commands.list = {
             Logger.warn("Only " + removed + " bots were kicked");
     },
     board: function(gameServer, split) {
+        try {
         var newLB = [];
         var reset = split[1];
         
@@ -297,6 +311,10 @@ Commands.list = {
             gameServer.gameMode.packetLB = gm.packetLB;
             gameServer.gameMode.updateLB = gm.updateLB;
             Logger.print("Successfully reset leaderboard");
+            }
+        } catch (error) {
+            Logger.error("Unable to change leaderboard!");
+            return;
         }
     },
     change: function(gameServer, split) {
@@ -495,6 +513,7 @@ Commands.list = {
     },
     mass: function(gameServer, split) {
         // Validation checks
+        try {
         var id = parseInt(split[1]);
         if (isNaN(id)) {
             Logger.warn("Please specify a valid player ID!");
@@ -517,11 +536,16 @@ Commands.list = {
                 }
                 Logger.print("Set mass of " + getName(client._name) + " to " + (size * size / 100).toFixed(3));
                 break;
+                }
             }
-        }
         if (client == null) return void Logger.warn("That player ID is non-existant!");
+        } catch (error) {
+            Logger.warn("Make sure you are using proper Sytanx - Use help to see!");
+            return;
+        }
     },
     spawnmass: function(gameServer, split) {
+        try {
         var id = parseInt(split[1]);
         if (isNaN(id)) {
             Logger.warn("Please specify a valid player ID!");
@@ -541,11 +565,16 @@ Commands.list = {
                 var client = gameServer.clients[i].playerTracker;
                 client.spawnmass = size;
                 Logger.print("Set spawnmass of "+ getName(client._name) + " to " + (size * size / 100).toFixed(3));
+                }
             }
-        }
         if (client == null) return void Logger.warn("That player ID is non-existant!");
+        } catch (error) {
+            Logger.warn("Make sure you are using proper Sytanx - Use help to see!");
+            return;
+        }
     },   
     speed: function(gameServer, split) {
+        try {
         var id = parseInt(split[1]);
         var speed = parseInt(split[2]);
         if (isNaN(id)) {
@@ -571,19 +600,28 @@ Commands.list = {
                     speed * 40 * this.owner.customspeed : // Set by command
                     speed * 40 * this.gameServer.config.playerSpeed;
                     return this._speed * normalizedDist / dist;
-                };
+                    };
+                }
             }
-        }
         if (client == null) return void Logger.warn("That player ID is non-existant!");
         Logger.print("Set base speed of " + getName(client._name) + " to " + speed);
+        } catch (error) {
+            Logger.warn("Make sure you are using proper Sytanx - Use help to see!");
+            return;
+        }
     },
     merge: function(gameServer, split) {
+        try {
         // Validation checks
         var id = parseInt(split[1]);
         if (isNaN(id)) {
             Logger.warn("Please specify a valid player ID!");
             return;
         }
+    } catch (error) {
+        Logger.warn("Please input a valid Number!");
+        return;
+    }
         
         // Find client with same ID as player entered
         for (var i = 0; i < gameServer.clients.length; i++) {
@@ -600,11 +638,16 @@ Commands.list = {
         if (client == null) return void Logger.warn("That player ID is non-existant!");
     },
     rec: function(gameServer, split) {
+        try {
         var id = parseInt(split[1]);
         if (isNaN(id)) {
             Logger.warn("Please specify a valid player ID!");
             return;
         }
+    } catch (error) {
+        Logger.warn("Please input a valid number!");
+        return;
+    }
         
         // set rec for client
         for (var i in gameServer.clients) {
@@ -618,6 +661,7 @@ Commands.list = {
         if (client == null) return void Logger.warn("That player ID is non-existant!");
     },
     split: function(gameServer, split) {
+        try {
         var id = parseInt(split[1]);
         var count = parseInt(split[2]);
         if (isNaN(id)) {
@@ -628,6 +672,10 @@ Commands.list = {
             Logger.print("Split player 4 times");
             count = 4;
         }
+    } catch (error) {
+        Logger.warn("Please check your Sytanx!");
+        return;
+    }
         if (count > gameServer.config.playerMaxCells) {
             Logger.print("Split player to playerMaxCells");
             count = gameServer.config.playerMaxCells;
@@ -647,6 +695,7 @@ Commands.list = {
     },
     name: function(gameServer, split) {
         // Validation checks
+        try {
         var id = parseInt(split[1]);
         if (isNaN(id)) {
             Logger.warn("Please specify a valid player ID!");
@@ -658,6 +707,9 @@ Commands.list = {
             Logger.warn("Please type a valid name");
             return;
         }
+    } catch (error) {
+        return;
+    }
         
         // Change name
         for (var i = 0; i < gameServer.clients.length; i++) {
@@ -674,6 +726,7 @@ Commands.list = {
         Logger.warn("That player ID (" + id + ") is non-existant!");
     },
     skin: function(gameServer, args) {
+        try {
         if (!args || args.length < 3) {
             Logger.warn("Please specify a valid player ID and skin name!");
             return;
@@ -686,14 +739,16 @@ Commands.list = {
         var skin = args[2].trim();
         if (!skin) {
             Logger.warn("Please specify skin name!");
-        }
+        } 
+    } catch (error) {}
         var player = playerById(id, gameServer);
         if (!player) {
             Logger.warn("That player ID (" + id + ") is non-existant!");
             return;
         }
         if (player.cells.length) {
-            Logger.warn("Player is alive, skin will not be applied to existing cells");
+            Logger.warn("Killing the player to use skin");
+            Commands.list.kill(gameServer, split);
         }
         Logger.print("Player \"" + getName(player._name) + "\"'s skin is changed to " + skin);
         player.setSkin(skin);
@@ -788,11 +843,13 @@ Commands.list = {
         Logger.print(s + " the game.");
     },
     freeze: function(gameServer, split) {
+        try {
         var id = parseInt(split[1]);
         if (isNaN(id)) {
             Logger.print("Please specify a valid player ID!");
             return;
         }
+    } catch ("Please check your Sytanx!");
 
         for (var i in gameServer.clients) {
             if (gameServer.clients[i].playerTracker.pID == id) {
@@ -832,12 +889,13 @@ Commands.list = {
         Logger.print("Current update time: " + gameServer.updateTimeAvg.toFixed(3) + " [ms]  (" + ini.getLagMessage(gameServer.updateTimeAvg) + ")");
     },
     tp: function(gameServer, split) {
+        try {
         var id = parseInt(split[1]);
         if (isNaN(id)) {
             Logger.warn("Please specify a valid player ID!");
             return;
         }
-        
+    } catch (error) {return}
         // Make sure the input values are numbers
         var pos = {
             x: parseInt(split[2]),
@@ -870,13 +928,15 @@ Commands.list = {
             Logger.warn("Please specify either virus, food, or mothercell");
             return;
         }
-    
+        try {    
         var pos = {
             x: parseInt(split[2]),
             y: parseInt(split[3])
         };
         var mass = parseInt(split[4]);
-        
+        } catch (error) {
+            return;
+        }
         // Make sure the input values are numbers
         if (isNaN(pos.x) || isNaN(pos.y)) {
             Logger.warn("Invalid coordinates");
@@ -913,6 +973,7 @@ Commands.list = {
         }
     },
     replace: function(gameServer, split) {
+        try {
         var id = parseInt(split[1]);
         if (isNaN(id)) {
             Logger.warn("Please specify a valid player ID!");
@@ -923,6 +984,9 @@ Commands.list = {
             Logger.warn("Please specify either virus, food, or mothercell");
             return;
         }
+    } catch (error) {
+        return;
+    }
         for (var i in gameServer.clients) {
             if (gameServer.clients[i].playerTracker.pID == id) {
                 var client = gameServer.clients[i].playerTracker;
@@ -955,11 +1019,15 @@ Commands.list = {
         if (client == null) return void Logger.warn("That player ID is non-existant!");
     },
     pop: function(gameServer, split) {
+        try {
         var id = parseInt(split[1]);
         if (isNaN(id)) {
             Logger.warn("Please specify a valid player ID!");
             return;
         }
+    } catch (error) {
+        return;
+    }
         for (var i in gameServer.clients) {
             if (gameServer.clients[i].playerTracker.pID == id) {
                 var client = gameServer.clients[i].playerTracker;
@@ -972,11 +1040,15 @@ Commands.list = {
         if (client == null) return void Logger.warn("That player ID is non-existant!");
     },
     explode: function(gameServer, split) {
+        try {
         var id = parseInt(split[1]);
         if (isNaN(id)) {
             Logger.warn("Please specify a valid player ID!");
             return;
         }
+    } catch (error) {
+        return;
+    }
         for (var i in gameServer.clients) {
             if (gameServer.clients[i].playerTracker.pID == id) {
                 var client = gameServer.clients[i].playerTracker;

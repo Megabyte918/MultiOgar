@@ -83,6 +83,11 @@ function keydown(event) {
         case 49: //Space Macro (1)
             split();
             break;
+        case 83: //Popsplit Macro (s) For people that are too lazy to press space twice and instead use the double split macro and complain when they fail their popsplits. Don't worry your not alone :)
+            var time1 = Math.random() * (350 - 200) + 200;
+            split();
+            setTimeout(split, time1);
+            break;
         case 72: //Horizontal linesplit (h)
             X = window.innerWidth / 2;
             Y = window.innerHeight / 2;

@@ -115,7 +115,7 @@ function GameServer() {
         ejectSize: 40,              // vanilla: mass = val*val/100 = 16 mass
         ejectSizeLoss: 45,          // Eject size which will be substracted from player cell (vanilla: mass = val*val/100 = 20 mass?)
         ejectCooldown: 3,           // Tick count until a player can eject mass again in ticks (1 tick = 40 ms)
-        ejectSpawnPercent: 0.5,     // Chance for a player to spawn from ejected mass. 0.5 = 50% (set to 0 to disable)
+        ejectSpawnPercent: 50,     // Chance for a player to spawn from ejected mass. 0.5 = 50% (set to 0 to disable)
         ejectVirus: 0,              // Whether or not players can eject viruses instead of mass
         ejectVelocity: 780,         // Velocity of ejecting cells (speed and distance)
         
@@ -854,7 +854,7 @@ GameServer.prototype.spawnPlayer = function(player, pos) {
     var index = (this.nodesEjected.length - 1) * ~~Math.random();
     var eject = this.nodesEjected[index]; // Randomly selected
     if (eject && !eject.isRemoved && eject.boostDistance < 1 &&
-        Math.random() <= this.config.ejectSpawnPercent) {
+        Math.random() <= (this.config.ejectSpawnPercent * 100)) {
         // Spawn from ejected mass
         pos = eject.position.clone();
         player.setColor(eject.color);

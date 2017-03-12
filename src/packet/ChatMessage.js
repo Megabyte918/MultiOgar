@@ -40,7 +40,7 @@ ChatMessage.prototype.build = function (protocol) {
     writer.writeUInt8(color.r >> 0);
     writer.writeUInt8(color.g >> 0);
     writer.writeUInt8(color.b >> 0);
-    if (protocol <= 5) {
+    if (protocol < 6) {
         writer.writeStringZeroUnicode(name);
         writer.writeStringZeroUnicode(text);
     } else {

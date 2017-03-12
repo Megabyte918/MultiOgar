@@ -1,4 +1,4 @@
-﻿module.exports = {
+module.exports = {
     BinaryWriter: require('./BinaryWriter'),
     BinaryReader: require('./BinaryReader'),
     ChatMessage: require('./ChatMessage'),
@@ -10,5 +10,5 @@
     SetBorder: require('./SetBorder'),
     UpdateNodes: require('./UpdateNodes'),
     UpdateLeaderboard: require('./UpdateLeaderboard'),
-    DrawLine: require('./DrawLine'),
+    LeaderboardPosition: require('./LeaderboardPosition'),
 };

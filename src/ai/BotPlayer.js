@@ -1,5 +1,5 @@
 var PlayerTracker = require('../PlayerTracker');
-var Vector = require('vector2-node');
+var Vec2 = require('../modules/Vec2');
 
 function BotPlayer() {
     PlayerTracker.apply(this, Array.prototype.slice.call(arguments));
@@ -10,8 +10,6 @@ BotPlayer.prototype = new PlayerTracker();
 
 
 BotPlayer.prototype.largest = function (list) {
-    if (!list.length) return null; // Error!
-
     // Sort the cells by Array.sort() function to avoid errors
     var sorted = list.valueOf();
     sorted.sort(function (a, b) {
@@ -29,16 +27,11 @@ BotPlayer.prototype.checkConnection = function () {
         return;
     }
     // Respawn if bot is dead
-    if (!this.cells.length) {
+    if (!this.cells.length)
         this.gameServer.gameMode.onPlayerSpawn(this.gameServer, this);
-        if (!this.cells.length) {
-            // If the bot cannot spawn any cells, then disconnect it
-            this.socket.close();
-        }
-    }
 };
 
-BotPlayer.prototype.sendUpdate = function () { // Overrides the update function from player tracker
+BotPlayer.prototype.sendUpdate = function () {
     if (this.splitCooldown) this.splitCooldown--;
     this.decide(this.largest(this.cells)); // Action
 };
@@ -46,7 +39,7 @@ BotPlayer.prototype.sendUpdate = function () { // Overrides the update function 
 // Custom
 BotPlayer.prototype.decide = function (cell) {
     if (!cell) return; // Cell was eaten, check in the next tick (I'm too lazy)
-    var result = new Vector(0, 0); // For splitting
+    var result = new Vec2(0, 0); // For splitting
     
     for (var i = 0; i < this.viewNodes.length; i++) {
         var check = this.viewNodes[i];
@@ -56,15 +49,13 @@ BotPlayer.prototype.decide = function (cell) {
         var influence = 0;
         if (check.cellType == 0) {
             // Player cell
-            if (this.gameServer.gameMode.haveTeams && (cell.owner.team == check.owner.team)) {
+            if (this.gameServer.gameMode.haveTeams && cell.owner.team == check.owner.team) {
                 // Same team cell
                 influence = 0;
-            }
-            else if (cell._size > check._size * 1.15) {
+            } else if (cell._size > check._size * 1.15) {
                 // Can eat it
                 influence = check._size * 2.5;
-            }
-            else if (check._size > cell._size * 1.15) {
+            } else if (check._size > cell._size * 1.15) {
                 // Can eat me
                 influence = -check._size;
             } else {
@@ -95,16 +86,15 @@ BotPlayer.prototype.decide = function (cell) {
                 influence = check._size;
         }
         
-        // Apply influence if it isn't 0 or my cell
-        if (influence == 0 || cell.owner == check.owner)
-            continue;
+        // Apply influence if it isn't 0
+        if (influence == 0) continue;
         
         // Calculate separation between cell and check
-        var displacement = new Vector(check.position.x - cell.position.x, check.position.y - cell.position.y);
+        var displacement = new Vec2(check.position.x - cell.position.x, check.position.y - cell.position.y);
         
         // Figure out distance between cells
-        var distance = displacement.length();
-        if (!influence) {
+        var distance = displacement.sqDist();
+        if (influence < 0) {
             // Get edge distance
             distance -= cell._size + check._size;
         }
@@ -113,31 +103,22 @@ BotPlayer.prototype.decide = function (cell) {
         if (distance < 1) distance = 1; // Avoid NaN and positive influence with negative distance & attraction
         influence /= distance;
         
-        // Produce force vector exerted by this entity on the cell
-        var force = displacement.normalize().scale(influence);
-        
         // Splitting conditions
         if (check.cellType == 0 && cell._size > check._size * 1.15
             && !this.splitCooldown && this.cells.length < 8 && 
             820 - cell._size / 2 - check._size >= distance) {
             // Splitkill the target
-            this.mouse = {
-                x: check.position.x,
-                y: check.position.y
-            };
             this.splitCooldown = 15;
+            this.mouse = check.position.clone();
             this.socket.packetHandler.pressSpace = true;
             return;
-        } else {
-            // Add up forces on the entity
-            result.add(force);
-        }
+        } else
+            // Produce force vector exerted by this entity on the cell
+            result.add(displacement.normalize(), influence);
     }
-    // Normalize the resulting vector
-    result.normalize();
     // Set bot's mouse position
-    this.mouse = {
-        x: cell.position.x + result.x * 800,
-        y: cell.position.y + result.y * 800
-    };
+    this.mouse = new Vec2(
+        cell.position.x + result.x * 800,
+        cell.position.y + result.y * 800
+    );
 };

@@ -23,6 +23,8 @@ MotherCell.prototype = new Cell();
 MotherCell.prototype.onEaten = Virus.prototype.onEaten; // Copies the virus prototype function
 
 MotherCell.prototype.canEat = function (cell) {
+    var maxMass = this.gameServer.config.motherCellMaxMass;
+    if (maxMass && this._mass >= maxMass) return false;
     return cell.cellType == 0 ||  // can eat player cell
            cell.cellType == 2 ||  // can eat virus
            cell.cellType == 3;    // can eat ejected mass
@@ -33,7 +35,7 @@ MotherCell.prototype.onUpdate = function () {
         return;
     }
     var maxFood = this.gameServer.config.foodMaxAmount;
-    if (this.gameServer.currentFood >= maxFood) {
+    if (this.gameServer.nodesFood.length >= maxFood) {
         return;
     }
     var size1 = this._size;
@@ -59,7 +61,7 @@ MotherCell.prototype.onUpdate = function () {
         // Eject to random distance
         food.setBoost(32 + 32 * Math.random(), angle);
         
-        if (this.gameServer.currentFood >= maxFood || size1 <= this.motherCellMinSize) {
+        if (this.gameServer.nodesFood.length >= maxFood || size1 <= this.motherCellMinSize) {
             break;
         }
     }

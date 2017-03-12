@@ -2,9 +2,7 @@ var Cell = require('./Cell');
 
 function PlayerCell() {
     Cell.apply(this, Array.prototype.slice.call(arguments));
-    
     this.cellType = 0;
-    this._speed = null;
     this._canRemerge = false;
 }
 
@@ -17,24 +15,22 @@ PlayerCell.prototype.canEat = function (cell) {
     return true; // player cell can eat anyone
 };
 
-PlayerCell.prototype.getSpeed = function () {
-    var speed = 2.1106 / Math.pow(this._size, 0.449);
-    // tickStep = 40ms
-    this._speed = speed * 40 * this.gameServer.config.playerSpeed;
-    return this._speed;
+PlayerCell.prototype.getSpeed = function (dist) {
+    var speed = 2.2 * Math.pow(this._size, -0.439);
+    speed *= 40 * this.gameServer.config.playerSpeed;
+    return Math.min(dist, speed) / dist;
 };
 
 PlayerCell.prototype.onAdd = function (gameServer) {
-    // Gamemode actions
-    gameServer.gameMode.onCellAdd(this);
+    // Add to player nodes list
+    this.gameServer.nodesPlayer.unshift(this);
 };
 
 PlayerCell.prototype.onRemove = function (gameServer) {
     // Remove from player cell list
     var index = this.owner.cells.indexOf(this);
-    if (index != -1) {
-        this.owner.cells.splice(index, 1);
-    }
-    // Gamemode actions
-    gameServer.gameMode.onCellRemove(this);
+    if (index != -1) this.owner.cells.splice(index, 1);
+
+    index = this.gameServer.nodesPlayer.indexOf(this);
+    if (index != -1) this.gameServer.nodesPlayer.splice(index, 1);
 };

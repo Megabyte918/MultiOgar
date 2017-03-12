@@ -21,7 +21,7 @@ fi
 #This will give priority to nodejs
 command -v nodejs &>/dev/null
 if [ $? -eq 0 ]; then
-    nodejs ../src/index.js
+    node ../src/index.js
 else
     command -v nodejs &>/dev/null
     

@@ -1,4 +1,36 @@
 # Changelog
+#### 1.6.0:
+* Refactored collision and move engine;
+* Formatted & simplified some code;
+* Refactored splitting cells;
+* Tweaked splitting again;
+* Fixed bug with mothercells eating viruses;
+* Fixed "kickbot" command kicking minions too;
+* Fixed playerbots not being able to have minions;
+* Reduced rate of cells switching order when doublesplitting;
+* ^^ This also fixed pushback with mobile splitting;
+* Completely fixed ejected mass dissapearing;
+* Fixed connection issues;
+* Fixed long distance popsplits;
+* Got rid of vegetable bot names;
+* Refactored BinaryWriter;
+* Refactored BinaryReader;
+* Made changes to things regarding packets, thanks to @ItzLevvie;
+* Fixed food registering as playercell, thanks to @NuclearC and @ItzLevvie;
+* Refactored QuadNode;
+* Refactored safe spawning;
+* Fixed bug with linux script;
+* Fixed error with ws module;
+* Made some edits to commands, thanks to @Agarian;
+* Implemented vector;
+* Added popsplit macro, thanks to @Tyler3D;
+* Refactored some of the scripts;
+* Fixed leaderboard positioning in FFA;
+* Added "calc" command;
+* Tweaked eject size and virus explosion multipliers;
+* Fixed server not working with uws module, thanks to @Luka967
+
+-------------
 #### 1.4.8:
 * Added multiple client bindings, thanks to @MastaCoder;
 * Cleaned up setNickname function in PacketHandler, thanks to @MastaCoder;
@@ -127,3 +159,46 @@
 #### 1.2.47:
 * Improved stability and performance; 
 * Added mute/unmute command
+
+--------------
+#### What's new from Ogar:
+* Added support for secure websocket connections (TLS);
+* Fixed mass decay;
+* Added ejectSizeLoss;
+* Added sub-net ban feature (use `ban xx.xx.xx.*` or `ban xx.xx.*.*` to ban entire sub-network);
+* Added performance optimizations, now up to 700 bots with no lags at all;
+* Fixed bug when some cell split/eject were shown with delay for some clients;
+* Added a lot of protocol optimizations, now server works with no lags at all even with 64 connected players;
+* Added server version, now you can check if your MultiOgar code is fresh;
+* Significant performance improvement and more smooth physics;
+* Added protocol optimizations to reduce lags on cell multi split;
+* Fixed pop-split behavior;
+* Fixed cell-split order, now split-run works ok;
+* A little performance improvement for split/eject;
+* Fixed min mass to split/eject;
+* Fixed mass-limit behavior;
+* Added chat player commands /skin and /kill (to change skin, just type /skin %shark in the chat);
+* Added scramble level 3 (anti-bot/anti-minimap protection), unsupported on some clients (unfortunately include vanilla, ogar.mivabe.nl works ok);
+* Massive perfromance improvement & reduce network traffic;
+* Split behavior - fixed;
+* Protocol code - optimized;
+* Massive performance improvement with quad-tree lookup;
+* Split/Eject - physics code rewritten;
+* Player speed - physics code rewritten;
+* Cell remerge - physics code rewritten;
+* Cell collision - physics code rewritten;
+* View area - code rewritten;
+* Spectate - code rewritten;
+* Mouse control and cell movements - physics code rewritten;
+* Border calculations - rewritten;
+* Border bouncy physics - fixed and improved;
+* mainLoop - cleaned;
+* Added support for different protocols (4, early 5, late 5, 6, 7, 8);
+* Added automatic mouse message type recognition;
+* Added chat support;
+* Added anti-spam protection;
+* Added skin support (use name "< shark > Fish", remove space);
+* Color generator replaced with hsv model;
+* Memory leaks - fixed;
+* Performance improved and optimized;
+* Added support for server tracker ogar.mivabe.nl/master

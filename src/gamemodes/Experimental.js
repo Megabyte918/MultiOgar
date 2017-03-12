@@ -30,15 +30,10 @@ Experimental.prototype.spawnMotherCell = function (gameServer) {
     if (this.nodesMother.length >= this.motherMinAmount) {
         return;
     }
-    // Spawns a mother cell
-    var pos = gameServer.randomPos();
-    if (gameServer.willCollide(pos, 149)) {
-        // cannot find safe position => do not spawn
-        return;
-    }
     // Spawn if no cells are colliding
-    var mother = new Entity.MotherCell(gameServer, null, pos, null);
-    gameServer.addNode(mother);
+    var mother = new Entity.MotherCell(gameServer, null, gameServer.randomPos(), null);
+    if (!gameServer.willCollide(149, mother))
+        gameServer.addNode(mother);
 };
 
 // Override
@@ -51,8 +46,7 @@ Experimental.prototype.onServerInit = function (gameServer) {
     var self = this;
     Entity.Virus.prototype.onEat = function (prey) {
         // Pushes the virus
-        var angle = prey.isMoving ? prey.boostDirection.angle : this.boostDirection.angle;
-        this.setBoost(16 * 20, angle);
+        this.setBoost(220, prey.boostDirection.angle());
     };
     Entity.MotherCell.prototype.onAdd = function () {
         self.nodesMother.push(this);

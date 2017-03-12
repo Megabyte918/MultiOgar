@@ -1,137 +1,69 @@
-﻿'use strict';
+'use strict';
 /*
  * Simple BinaryWriter is a minimal tool to write binary stream with unpredictable size.
  * Useful for binary serialization.
  *
- * Copyright (c) 2016 Barbosik
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *     http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * 
- * 
+ * Copyright (c) 2016 Barbosik https://github.com/Barbosik
+ * License: Apache License, Version 2.0
  */
 
-function BinaryWriter(size) {
-    if (!size || size <= 0) {
-        size = Buffer.poolSize / 2;
-    }
-    this._buffer = new Buffer(size);
-    this._length = 0;
+const oldNode = parseInt(process.version[1]) < 6;
+const allocMax = 1048576;
+
+global.sharedBuffer = oldNode ? new Buffer(allocMax) : Buffer.allocUnsafe(allocMax);
+global.allocLength = 0;
+
+function BinaryWriter() {
+    allocLength = 0;
 }
 
 module.exports = BinaryWriter;
 
-BinaryWriter.prototype.writeUInt8 = function (value) {
-    checkAlloc(this, 1);
-    this._buffer[this._length++] = value;
+BinaryWriter.prototype.writeUInt8 = function(value) {
+    sharedBuffer.writeUInt8(value, allocLength++, true);
 };
 
-BinaryWriter.prototype.writeInt8 = function (value) {
-    checkAlloc(this, 1);
-    this._buffer[this._length++] = value;
+BinaryWriter.prototype.writeUInt16 = function(value) {
+    sharedBuffer.writeUInt16LE(value, allocLength, true);
+    allocLength += 2;
 };
 
-BinaryWriter.prototype.writeUInt16 = function (value) {
-    checkAlloc(this, 2);
-    this._buffer[this._length++] = value;
-    this._buffer[this._length++] = value >> 8;
+BinaryWriter.prototype.writeUInt32 = function(value) {
+    sharedBuffer.writeUInt32LE(value, allocLength, true);
+    allocLength += 4;
 };
 
-BinaryWriter.prototype.writeInt16 = function (value) {
-    checkAlloc(this, 2);
-    this._buffer[this._length++] = value;
-    this._buffer[this._length++] = value >> 8;
+BinaryWriter.prototype.writeFloat = function(value) {
+    sharedBuffer.writeFloatLE(value, allocLength, true);
+    allocLength += 4;
 };
 
-BinaryWriter.prototype.writeUInt32 = function (value) {
-    checkAlloc(this, 4);
-    this._buffer[this._length++] = value;
-    this._buffer[this._length++] = value >> 8;
-    this._buffer[this._length++] = value >> 16;
-    this._buffer[this._length++] = value >> 24;
+BinaryWriter.prototype.writeDouble = function(value) {
+    sharedBuffer.writeDoubleLE(value, allocLength, true);
+    allocLength += 8;
 };
 
-BinaryWriter.prototype.writeInt32 = function (value) {
-    checkAlloc(this, 4);
-    this._buffer[this._length++] = value;
-    this._buffer[this._length++] = value >> 8;
-    this._buffer[this._length++] = value >> 16;
-    this._buffer[this._length++] = value >> 24;
+BinaryWriter.prototype.writeBytes = function(data) {
+    data.copy(sharedBuffer, allocLength, 0, data.length);
+    allocLength += data.length;
 };
 
-BinaryWriter.prototype.writeFloat = function (value) {
-    checkAlloc(this, 4);
-    this._buffer.writeFloatLE(value, this._length, true);
-    this._length += 4;
-};
-
-BinaryWriter.prototype.writeDouble = function (value) {
-    checkAlloc(this, 8);
-    this._buffer.writeDoubleLE(value, this._length, true);
-    this._length += 8;
-};
-
-BinaryWriter.prototype.writeBytes = function (data) {
-    checkAlloc(this, data.length);
-    data.copy(this._buffer, this._length, 0, data.length);
-    this._length += data.length;
-};
-
-BinaryWriter.prototype.writeStringUtf8 = function (value) {
-    var length = Buffer.byteLength(value, 'utf8')
-    checkAlloc(this, length);
-    this._buffer.write(value, this._length, 'utf8');
-    this._length += length;
-};
-
-BinaryWriter.prototype.writeStringUnicode = function (value) {
-    var length = Buffer.byteLength(value, 'ucs2')
-    checkAlloc(this, length);
-    this._buffer.write(value, this._length, 'ucs2');
-    this._length += length;
-};
-
-BinaryWriter.prototype.writeStringZeroUtf8 = function (value) {
-    this.writeStringUtf8(value);
+BinaryWriter.prototype.writeStringZeroUtf8 = function(value) {
+    var length = Buffer.byteLength(value, 'utf8');
+    sharedBuffer.write(value, allocLength, 'utf8');
+    allocLength += length;
     this.writeUInt8(0);
 };
 
-BinaryWriter.prototype.writeStringZeroUnicode = function (value) {
-    this.writeStringUnicode(value);
+BinaryWriter.prototype.writeStringZeroUnicode = function(value) {
+    var length = Buffer.byteLength(value, 'ucs2');
+    sharedBuffer.write(value, allocLength, 'ucs2');
+    allocLength += length;
     this.writeUInt16(0);
 };
 
-BinaryWriter.prototype.getLength = function () {
-    return this._length;
-};
-
-BinaryWriter.prototype.reset = function () {
-    this._length = 0;
-};
-
-BinaryWriter.prototype.toBuffer = function () {
-    return Buffer.concat([this._buffer.slice(0, this._length)]);
-};
-
-function checkAlloc(writer, size) {
-    var needed = writer._length + size;
-    if (writer._buffer.length >= needed)
-        return;
-    var chunk = Math.max(Buffer.poolSize / 2, 1024);
-    var chunkCount = (needed / chunk) >>> 0;
-    if ((needed % chunk) > 0) {
-        chunkCount += 1;
-    }
-    var buffer = new Buffer(chunkCount * chunk);
-    writer._buffer.copy(buffer, 0, 0, writer._length);
-    writer._buffer = buffer;
+BinaryWriter.prototype.toBuffer = function() {
+    var newBuf = oldNode ? new Buffer(allocLength) : Buffer.allocUnsafe(allocLength);
+    sharedBuffer.copy(newBuf, 0, 0, allocLength);
+    return newBuf;
 };

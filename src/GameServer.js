@@ -542,7 +542,7 @@ GameServer.prototype.sendChatMessage = function(from, to, message) {
 };
 
 GameServer.prototype.timerLoop = function() {
-    var timeStep = 40; // vanilla: 40
+    var timeStep = 50; // vanilla: 40
     var ts = Date.now();
     var dt = ts - this.timeStamp;
     if (dt < timeStep - 5) {

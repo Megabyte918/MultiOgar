@@ -1,33 +1,26 @@
-﻿// Imports
+﻿ // Imports
 var Logger = require('./modules/Logger');
 var Commands = require('./modules/CommandList');
 var GameServer = require('./GameServer');
 var figlet = require('figlet');
-
 // Init variables
 var showConsole = true;
-
 // Start msg
 Logger.start();
-
-process.on('exit', function (code) {
+process.on('exit', function(code) {
     Logger.debug("process.exit(" + code + ")");
     Logger.shutdown();
 });
-
-process.on('uncaughtException', function (err) {
+process.on('uncaughtException', function(err) {
     Logger.fatal(err.stack);
     process.exit(1);
 });
-
 // Run Ogar
 var gameServer = new GameServer();
 Logger.info("\u001B[1m\u001B[32mMultiOgar-Edited " + gameServer.version + "\u001B[37m - An open source multi-protocol ogar server\u001B[0m");
-
 // Handle arguments
-process.argv.forEach(function (item) {
-    
-    switch (item){
+process.argv.forEach(function(item) {
+    switch (item) {
         case "--help":
             console.log("Proper Usage: node index.js");
             console.log("    -n, --name             Set name");
@@ -40,65 +33,58 @@ process.argv.forEach(function (item) {
             console.log("    --help                 Help menu");
             console.log("");
             break;
-            
-        case "-n": 
-        case "--name": 
+        case "-n":
+        case "--name":
             setParam("serverName", getValue(item));
             break;
-            
-        case "-g": 
-        case "--gameport": 
+        case "-g":
+        case "--gameport":
             setParam("serverPort", parseInt(getValue(item)));
             break;
-        case "-s": 
-        case "--statsport": 
+        case "-s":
+        case "--statsport":
             setParam("serverStatsPort", parseInt(getValue(item)));
             break;
-            
-        case "-m": 
+        case "-m":
         case "--gamemode":
             setParam("serverGamemode", getValue(item));
             break;
-            
-        case "-c": 
+        case "-c":
         case "--connections":
             setParam("serverMaxConnections", parseInt(getValue(item)));
             break;
-        case "-t": 
+        case "-t":
         case "--tracker":
             setParam("serverTracker", parseInt(getValue(item)));
             break;
-        
         case "--noconsole":
             showConsole = false;
             break;
     }
 });
 
-function getValue(param){
+function getValue(param) {
     var ind = process.argv.indexOf(param);
-    var item  = process.argv[ind + 1]
-    if (!item || item.indexOf('-') != -1){
+    var item = process.argv[ind + 1]
+    if (!item || item.indexOf('-') != -1) {
         Logger.error("No value for " + param);
         return null;
-    } else{
+    } else {
         return item;
     }
 }
 
-function setParam(paramName, val){
-    if (!gameServer.config.hasOwnProperty(paramName)){
+function setParam(paramName, val) {
+    if (!gameServer.config.hasOwnProperty(paramName)) {
         Logger.error("Wrong parameter");
     }
     if (val || val === 0) {
-        if (typeof val === 'string'){
+        if (typeof val === 'string') {
             val = "'" + val + "'";
         }
         eval("gameServer.config." + paramName + "=" + val);
     }
 }
-
-
 gameServer.start();
 figlet(('MultiOgar-Edited  ' + gameServer.version), function(err, data) {
     if (err) {
@@ -108,7 +94,6 @@ figlet(('MultiOgar-Edited  ' + gameServer.version), function(err, data) {
     }
     console.log(data)
 });
-
 // Initialize the server console
 if (showConsole) {
     var readline = require('readline');
@@ -118,11 +103,9 @@ if (showConsole) {
     });
     setTimeout(prompt, 100);
 }
-
 // Console functions
-
 function prompt() {
-    in_.question(">", function (str) {
+    in_.question(">", function(str) {
         try {
             parseCommands(str);
         } catch (err) {
@@ -136,17 +119,12 @@ function prompt() {
 function parseCommands(str) {
     // Log the string
     Logger.write(">" + str);
-    
     // Don't process ENTER
-    if (str === '')
-        return;
-    
+    if (str === '') return;
     // Splits the string
     var split = str.split(" ");
-    
     // Process the first string value
     var first = split[0].toLowerCase();
-    
     // Get command function
     var execute = Commands.list[first];
     if (typeof execute != 'undefined') {

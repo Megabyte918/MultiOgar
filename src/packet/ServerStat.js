@@ -1,10 +1,8 @@
 function ServerStat(playerTracker) {
     this.playerTracker = playerTracker;
 }
-
 module.exports = ServerStat;
-
-ServerStat.prototype.build = function (protocol) {
+ServerStat.prototype.build = function(protocol) {
     var gameServer = this.playerTracker.gameServer;
     // Get server statistics
     var totalPlayers = 0;
@@ -12,13 +10,10 @@ ServerStat.prototype.build = function (protocol) {
     var spectPlayers = 0;
     for (var i = 0; i < gameServer.clients.length; i++) {
         var socket = gameServer.clients[i];
-        if (socket == null || !socket.isConnected)
-            continue;
+        if (socket == null || !socket.isConnected) continue;
         totalPlayers++;
-        if (socket.playerTracker.cells.length > 0)
-            alivePlayers++;
-        else
-            spectPlayers++;
+        if (socket.playerTracker.cells.length > 0) alivePlayers++;
+        else spectPlayers++;
     }
     var obj = {
         'name': gameServer.config.serverName,
@@ -34,7 +29,7 @@ ServerStat.prototype.build = function (protocol) {
     // Serialize
     var BinaryWriter = require("./BinaryWriter");
     var writer = new BinaryWriter();
-    writer.writeUInt8(254);             // Message Id
-    writer.writeStringZeroUtf8(json);   // JSON
+    writer.writeUInt8(254); // Message Id
+    writer.writeStringZeroUtf8(json); // JSON
     return writer.toBuffer();
 };

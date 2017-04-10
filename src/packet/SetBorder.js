@@ -4,10 +4,8 @@ function SetBorder(playerTracker, border, gameType, serverName) {
     this.gameType = gameType;
     this.serverName = serverName;
 }
-
 module.exports = SetBorder;
-
-SetBorder.prototype.build = function (protocol) {
+SetBorder.prototype.build = function(protocol) {
     var scrambleX = this.playerTracker.scrambleX;
     var scrambleY = this.playerTracker.scrambleY;
     if (this.gameType == null) {
@@ -21,7 +19,7 @@ SetBorder.prototype.build = function (protocol) {
     }
     var BinaryWriter = require("./BinaryWriter");
     var writer = new BinaryWriter();
-    writer.writeUInt8(0x40);                                // Packet ID
+    writer.writeUInt8(0x40); // Packet ID
     writer.writeDouble(this.border.minx + scrambleX);
     writer.writeDouble(this.border.miny + scrambleY);
     writer.writeDouble(this.border.maxx + scrambleX);
@@ -29,9 +27,7 @@ SetBorder.prototype.build = function (protocol) {
     writer.writeUInt32(this.gameType >> 0);
     var name = this.serverName;
     if (name == null) name = "";
-    if (protocol < 6)
-        writer.writeStringZeroUnicode(name);
-    else 
-        writer.writeStringZeroUtf8(name);
+    if (protocol < 6) writer.writeStringZeroUnicode(name);
+    else writer.writeStringZeroUtf8(name);
     return writer.toBuffer();
 };

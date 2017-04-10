@@ -7,18 +7,15 @@ function BotPlayer() {
 }
 module.exports = BotPlayer;
 BotPlayer.prototype = new PlayerTracker();
-
-
-BotPlayer.prototype.largest = function (list) {
+BotPlayer.prototype.largest = function(list) {
     // Sort the cells by Array.sort() function to avoid errors
     var sorted = list.valueOf();
-    sorted.sort(function (a, b) {
+    sorted.sort(function(a, b) {
         return b._size - a._size;
     });
     return sorted[0];
 };
-
-BotPlayer.prototype.checkConnection = function () {
+BotPlayer.prototype.checkConnection = function() {
     if (this.socket.isCloseRequest) {
         while (this.cells.length) {
             this.gameServer.removeNode(this.cells[0]);
@@ -27,24 +24,19 @@ BotPlayer.prototype.checkConnection = function () {
         return;
     }
     // Respawn if bot is dead
-    if (!this.cells.length)
-        this.gameServer.gameMode.onPlayerSpawn(this.gameServer, this);
+    if (!this.cells.length) this.gameServer.gameMode.onPlayerSpawn(this.gameServer, this);
 };
-
-BotPlayer.prototype.sendUpdate = function () {
+BotPlayer.prototype.sendUpdate = function() {
     if (this.splitCooldown) this.splitCooldown--;
     this.decide(this.largest(this.cells)); // Action
 };
-
 // Custom
-BotPlayer.prototype.decide = function (cell) {
+BotPlayer.prototype.decide = function(cell) {
     if (!cell) return; // Cell was eaten, check in the next tick (I'm too lazy)
     var result = new Vec2(0, 0); // For splitting
-    
     for (var i = 0; i < this.viewNodes.length; i++) {
         var check = this.viewNodes[i];
         if (check.owner == this) continue;
-        
         // Get attraction of the cells - avoid larger cells, viruses and same team cells
         var influence = 0;
         if (check.cellType == 0) {
@@ -85,28 +77,21 @@ BotPlayer.prototype.decide = function (cell) {
                 // can eat
                 influence = check._size;
         }
-        
         // Apply influence if it isn't 0
         if (influence == 0) continue;
-        
         // Calculate separation between cell and check
         var displacement = new Vec2(check.position.x - cell.position.x, check.position.y - cell.position.y);
-        
         // Figure out distance between cells
         var distance = displacement.sqDist();
         if (influence < 0) {
             // Get edge distance
             distance -= cell._size + check._size;
         }
-        
         // The farther they are the smaller influnce it is
         if (distance < 1) distance = 1; // Avoid NaN and positive influence with negative distance & attraction
         influence /= distance;
-        
         // Splitting conditions
-        if (check.cellType == 0 && cell._size > check._size * 1.15
-            && !this.splitCooldown && this.cells.length < 8 && 
-            820 - cell._size / 2 - check._size >= distance) {
+        if (check.cellType == 0 && cell._size > check._size * 1.15 && !this.splitCooldown && this.cells.length < 8 && 820 - cell._size / 2 - check._size >= distance) {
             // Splitkill the target
             this.splitCooldown = 15;
             this.mouse = check.position.clone();
@@ -117,8 +102,5 @@ BotPlayer.prototype.decide = function (cell) {
             result.add(displacement.normalize(), influence);
     }
     // Set bot's mouse position
-    this.mouse = new Vec2(
-        cell.position.x + result.x * 800,
-        cell.position.y + result.y * 800
-    );
+    this.mouse = new Vec2(cell.position.x + result.x * 800, cell.position.y + result.y * 800);
 };

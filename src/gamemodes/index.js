@@ -5,8 +5,7 @@ module.exports = {
     Experimental: require('./Experimental'),
     Rainbow: require('./Rainbow'),
 };
-
-var get = function (id) {
+var get = function(id) {
     var mode;
     switch (parseInt(id)) {
         case 1: // Teams
@@ -24,5 +23,4 @@ var get = function (id) {
     }
     return mode;
 };
-
 module.exports.get = get;

@@ -107,7 +107,15 @@ Commands.list = {
             clientCells += gameServer.clients[i].playerTracker.cells.length;
         }
         // Output node information
-        Logger.print("Clients:        " + fillChar(gameServer.clients.length, " ", 4, true) + " / " + gameServer.config.serverMaxConnections + " + bots" + "\n" + "Total nodes:" + fillChar(gameServer.nodes.length, " ", 8, true) + "\n" + "- Client cells: " + fillChar(clientCells, " ", 4, true) + " / " + (gameServer.clients.length * gameServer.config.playerMaxCells) + "\n" + "- Ejected cells:" + fillChar(gameServer.nodesEjected.length, " ", 4, true) + "\n" + "- Food:        " + fillChar(gameServer.nodesFood.length, " ", 4, true) + " / " + gameServer.config.foodMaxAmount + "\n" + "- Viruses:      " + fillChar(gameServer.nodesVirus.length, " ", 4, true) + " / " + gameServer.config.virusMaxAmount + "\n" + "Moving nodes:   " + fillChar(gameServer.movingNodes.length, " ", 4, true) + "\n" + "Quad nodes:     " + fillChar(scanNodeCount(gameServer.quadTree), " ", 4, true) + "\n" + "Quad items:     " + fillChar(scanItemCount(gameServer.quadTree), " ", 4, true));
+        Logger.print("Clients:        " + fillChar(gameServer.clients.length, " ", 4, true) + " / " + gameServer.config.serverMaxConnections + " + bots"+"\n"+
+                     "Total nodes:" + fillChar(gameServer.nodes.length, " ", 8, true)+"\n"+
+                     "- Client cells: " + fillChar(clientCells, " ", 4, true) + " / " + (gameServer.clients.length * gameServer.config.playerMaxCells)+"\n"+
+                     "- Ejected cells:" + fillChar(gameServer.nodesEjected.length, " ", 4, true)+"\n"+
+                     "- Food:        " + fillChar(gameServer.nodesFood.length, " ", 4, true) + " / " + gameServer.config.foodMaxAmount+"\n"+
+                     "- Viruses:      " + fillChar(gameServer.nodesVirus.length, " ", 4, true) + " / " + gameServer.config.virusMaxAmount+"\n"+
+                     "Moving nodes:   " + fillChar(gameServer.movingNodes.length, " ", 4, true)+"\n"+
+                     "Quad nodes:     " + fillChar(scanNodeCount(gameServer.quadTree), " ", 4, true)+"\n"+
+                     "Quad items:     " + fillChar(scanItemCount(gameServer.quadTree), " ", 4, true));
     },
     reset: function(gameServer, split) {
         Logger.warn("Removed " + gameServer.nodes.length + " nodes");

@@ -5,11 +5,10 @@
 // @author       Megabyte918
 // @match        *.agar.io/*
 // ==/UserScript==
-
 window.addEventListener('keydown', keydown);
 window.addEventListener('keyup', keyup);
-document.getElementById("nick").maxLength = "9e9";
-
+document.getElementById("nick")
+    .maxLength = "9e9";
 // List instructions
 var i = document.getElementById("instructions");
 i.innerHTML += "<center class='text-muted'>Hold <b>W</b> for macro feed</center>";
@@ -21,9 +20,9 @@ i.innerHTML += "<center class='text-muted'>Press <b>H</b> for horizontal linespl
 i.innerHTML += "<center class='text-muted'>Press <b>V</b> for vertical linesplit</center>";
 i.innerHTML += "<center class='text-muted'>Press <b>C</b> for popsplit macro</center>";
 i.innerHTML += "<center class='text-muted'>Press <b>F</b> for solo-tricksplit</center>";
-
 // Load macros
 var canFeed = false;
+
 function keydown(event) {
     if (event.keyCode == 87) {
         // Feeding Macro (w)
@@ -35,8 +34,14 @@ function keydown(event) {
         for (var a = 0; a < 4; a++) {
             setTimeout(function() {
                 split();
-                $("body").trigger($.Event("keydown", { keyCode: 87}));
-                $("body").trigger($.Event("keyup", { keyCode: 87}));
+                $("body")
+                    .trigger($.Event("keydown", {
+                        keyCode: 87
+                    }));
+                $("body")
+                    .trigger($.Event("keyup", {
+                        keyCode: 87
+                    }));
             }, a * 50);
         }
     }
@@ -66,31 +71,46 @@ function keydown(event) {
         // Horizontal linesplit (h)
         X = window.innerWidth / 2;
         Y = window.innerHeight / 2;
-        $("canvas").trigger($.Event("mousemove", {clientX: X, clientY: Y}));
+        $("canvas")
+            .trigger($.Event("mousemove", {
+                clientX: X,
+                clientY: Y
+            }));
     }
     if (event.keyCode == 86) {
         // Vertical linesplit (v)
         X = window.innerWidth / 2;
         Y = window.innerHeight / 2.006;
-        $("canvas").trigger($.Event("mousemove", {clientX: X, clientY: Y}));
+        $("canvas")
+            .trigger($.Event("mousemove", {
+                clientX: X,
+                clientY: Y
+            }));
     }
 }
-
 // When a player lets go of W stop feeding
 function keyup(event) {
     if (event.keyCode == 87) canFeed = false;
 }
-
 // Alias for W key
 function feed() {
     if (!canFeed) return;
-    window.onkeydown({keyCode: 87});
-    window.onkeyup({keyCode: 87});
+    window.onkeydown({
+        keyCode: 87
+    });
+    window.onkeyup({
+        keyCode: 87
+    });
     setTimeout(feed, 0);
 }
-
 // Alias for space
 function split() {
-    $("body").trigger($.Event("keydown", { keyCode: 32}));
-    $("body").trigger($.Event("keyup", { keyCode: 32}));
+    $("body")
+        .trigger($.Event("keydown", {
+            keyCode: 32
+        }));
+    $("body")
+        .trigger($.Event("keyup", {
+            keyCode: 32
+        }));
 }

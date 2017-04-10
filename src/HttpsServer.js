@@ -1,8 +1,7 @@
-﻿ // What's this?
+﻿
 var http = require('http'),
     https = require('https'),
-    inherits = require('util')
-    .inherits,
+    inherits = require('util').inherits,
     httpSocketHandler = http._connectionListener;
 var Logger = require('./modules/Logger');
 var isOldNode = /^v0\.10\./.test(process.version);

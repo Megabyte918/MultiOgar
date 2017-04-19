@@ -13,7 +13,6 @@ Made by @ZfsrGhS953 on GitHub
 Go check out his project! Its really nice :)
 https://github.com/ZfsrGhS953/Petridish-Ogar
 ************************************************/
-
 window.__WebSocket = window.WebSocket;
 window._WebSocket = window.WebSocket = function(ip) {
     return new window.fakeWebSocket(ip);
@@ -32,13 +31,13 @@ window.addEventListener("load", function() {
         ws.binaryType = "arraybuffer";
         for (var i in ws) fakeWS[i] = ws[i];
         fakeWS.send = function() {
-            if (window.key.e){
+            if (window.key.e) {
                 arguments[0] = new Int8Array(1);
                 arguments[0][0] = 22;
-            } else if (window.key.r){
+            } else if (window.key.r) {
                 arguments[0] = new Int8Array(1);
                 arguments[0][0] = 23;
-            } else if (window.key.t){
+            } else if (window.key.t) {
                 arguments[0] = new Int8Array(1);
                 arguments[0][0] = 24;
             } else if (window.key.p) {

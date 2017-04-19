@@ -1,12 +1,11 @@
-﻿var BinaryWriter = require("./BinaryWriter");
+﻿
+var BinaryWriter = require("./BinaryWriter");
 
 function AddNode(playerTracker, item) {
     this.playerTracker = playerTracker;
     this.item = item;
 }
-
 module.exports = AddNode;
-
 AddNode.prototype.build = function (protocol) {
     var writer = new BinaryWriter();
     writer.writeUInt8(0x20);                      // Packet ID

@@ -390,3 +390,9 @@ mystic_bird
 king_lion
 excalibur
 magic_hat
+funny_face
+air_bag
+smelly
+cyber_agent
+droid
+detective

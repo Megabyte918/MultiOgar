@@ -75,7 +75,7 @@ sudo apt-get install nodejs-legacy npm
 
 # Clone MultiOgar:
 git clone git://github.com/Megabyte918/MultiOgar-Edited.git
-If codeanywhere, refresh the page so the folders pop up.
+If codeanywhere, clone it, then refresh the page, so the folders pop up.
 
 # Install dependencies:
 cd MultiOgar-Edited

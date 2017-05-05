@@ -30,7 +30,7 @@ Please see the issue templete before you make an issue, you can find it [here](h
 *Manual*
 Installing required modules.
 ```batch
-:: Install Required Modules.
+:: Install Required modules.
 npm install
 
 :: Starting the server. 
@@ -49,11 +49,11 @@ sudo apt-get install git
 # Install node.js:
 sudo apt-get install nodejs-legacy npm
 
-# Clone MultiOgar:
+# Clone MultiOgar-Edited:
 git clone git://github.com/Megabyte918/MultiOgar-Edited.git
 
 # Install dependencies:
-cd MultiOgar
+cd MultiOgar-Edited
 npm install
 
 # Run the server:

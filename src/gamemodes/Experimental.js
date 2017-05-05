@@ -31,8 +31,8 @@ Experimental.prototype.spawnMotherCell = function (gameServer) {
         return;
     }
     // Spawn if no cells are colliding
-    var mother = new Entity.MotherCell(gameServer, null, gameServer.randomPos(), null);
-    if (!gameServer.willCollide(149, mother))
+    var mother = new Entity.MotherCell(gameServer, null, gameServer.randomPos(), 149);
+    if (!gameServer.willCollide(mother))
         gameServer.addNode(mother);
 };
 

@@ -55,13 +55,13 @@ Virus.prototype.onEaten = function (c) {
     cellsLeft -= big.length;
     // big splits
     for (var k = 0; k < big.length; k++) {
-        var angle = 2 * Math.PI * Math.random(); // random directions
-        this.gameServer.splitPlayerCell(c.owner, c, angle, big[k]);
+        var bigAngle = 2 * Math.PI * Math.random(); // random directions
+        this.gameServer.splitPlayerCell(c.owner, c, bigAngle, big[k]);
     }
     // small splits
     for (var k = 0; k < cellsLeft; k++) {
-        angle = 2 * Math.PI * Math.random(); // random directions
-        this.gameServer.splitPlayerCell(c.owner, c, angle, minSize);
+     var smallAngle = 2 * Math.PI * Math.random(); // random directions
+        this.gameServer.splitPlayerCell(c.owner, c, smallAngle, minSize);
     }
 };
 

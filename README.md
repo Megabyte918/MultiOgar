@@ -61,6 +61,42 @@ cd src
 sudo node index.js
 ```
 
+#### IDE server (Codeanywhere, Cloud9 etc...)
+
+```bash
+# First update your packages:
+sudo apt-get update
+
+# Install git:
+sudo apt-get install git
+
+# Install node.js:
+sudo apt-get install nodejs-legacy npm
+
+# Clone MultiOgar:
+git clone git://github.com/Megabyte918/MultiOgar-Edited.git
+If codeanywhere, clone it, then refresh the page, so the folders pop up.
+
+# Install dependencies:
+cd MultiOgar-Edited
+npm install
+
+# Changing port to make server run
+Go to gameserver.ini which is located in the src folder.
+Change the server port from 443 to a 4 digit number like 4443 for example
+
+# Changing configs (Codeanywhere only*)
+Right click on your server NAME, the one above MultiOgar-Edited, and click 'config'
+On line 8, replace it with this:
+"cwd": "~/workspace/MultiOgar-Edited/run", 
+Then on line 15, replace it with this:
+"sh lin-Start.sh" and save changes.
+
+# Run the server:
+cd src
+sudo node index.js
+Codeanywhere, easier way of accessing a 1 container server, just click the play icon to run the server.
+```
 ## Gallery
 ### Console:
 ![Console](http://i.imgur.com/bS5ToRD.png)

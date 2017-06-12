@@ -1,7 +1,7 @@
 function SetBorder(playerTracker, border, gameType, serverName) {
     this.playerTracker = playerTracker;
     this.border = border;
-    this.gameType = gameType;
+    this.gameType = playerTracker.gameServer.config.party ? this.gameType = 8 : this.gameType = gameType;
     this.serverName = serverName;
 }
 

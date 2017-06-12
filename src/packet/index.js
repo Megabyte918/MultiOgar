@@ -11,4 +11,5 @@ module.exports = {
     UpdateNodes: require('./UpdateNodes'),
     UpdateLeaderboard: require('./UpdateLeaderboard'),
     LeaderboardPosition: require('./LeaderboardPosition'),
+    Arrow: require('./Arrow'),
 };

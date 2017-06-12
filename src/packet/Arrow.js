@@ -19,7 +19,6 @@ Arrow.prototype.build160 = function(writer, playerTracker) {
 	writer.writeUInt16(friend.cells[0].position.x >> 0);
 	writer.writeUInt16(friend.cells[0].position.y >> 0);
 	writer.writeStringZeroUtf8(friend._name);
-	console.log(friend.cells[0].position.x + " " + friend.cells[0].position.y + " " + friend._name)
 };
 	return writer;
 };

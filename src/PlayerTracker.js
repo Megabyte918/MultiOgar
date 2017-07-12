@@ -299,7 +299,18 @@ PlayerTracker.prototype.sendUpdate = function() {
         this.tickLeaderboard = 0;
         if (this.gameServer.leaderboardType >= 0)
             packetHandler.sendPacket(new Packet.UpdateLeaderboard(this, this.gameServer.leaderboard, this.gameServer.leaderboardType));
+        if (this.gameServer.config.party) {
+        var friends = [];
+        for (var i in this.gameServer.clients) {
+            var client = this.gameServer.clients[i];
+            if (client.packetHandler.protocol >= 13 && client.playerTracker != this && client.playerTracker.cells.length)
+                friends.push(client.playerTracker);
+        };
+
+        packetHandler.sendPacket(new Packet.Arrow(friends));
     }
+    }
+
 };
 
 PlayerTracker.prototype.updateSpecView = function(len) {

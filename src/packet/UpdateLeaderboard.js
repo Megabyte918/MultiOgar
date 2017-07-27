@@ -151,7 +151,35 @@ UpdateLeaderboard.prototype.buildParty = function() {
     }
     return writer.toBuffer();
 };
+// FFA protocol 15
+UpdateLeaderboard.prototype.buildFfa13 = function () {
+var writer = new BinaryWriter();
+writer.writeUInt8(0x35); // Packet ID
+for (var i = 0; i < this.leaderboardCount; i++) {
+var item = this.leaderboard[i];
+if (item == null) return null; // bad leaderboardm just don't send it
 
+    if (item === this.playerTracker) {
+    	writer.writeUInt8(0x09);
+    	writer.writeUInt16(1);
+    } else {
+    var name = item._name;
+    writer.writeUInt8(0x02);
+    if (name != null && name.length)
+        writer.writeStringZeroUtf8(name);
+    else
+        writer.writeUInt8(0);
+}
+}
+var thing = this.leaderboard.indexOf(this.playerTracker) + 1;
+var place = (thing <= 10) ? null : thing;
+
+if (this.playerTracker.cells.length && place != null) {
+    writer.writeUInt8(0x09);
+    writer.writeUInt16(place);
+}
+return writer.toBuffer();
+};
 function writeCount(writer, flag1, flag2) {
     writer.writeUInt8(flag1); // Packet ID
     writer.writeUInt32(flag2 >>> 0); // Number of elements

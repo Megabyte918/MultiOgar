@@ -14,7 +14,6 @@ MinionPlayer.prototype.checkConnection = function () {
         while (this.cells.length) {
             this.gameServer.removeNode(this.cells[0]);
         }
-        this.isRemoved = true;
         return;
     }
     if (!this.cells.length) {

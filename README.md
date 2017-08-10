@@ -2,7 +2,7 @@
 
 A fast, open source server that supports multiple protocol versions and smooth vanilla physics.
 
-Since August of 2016, [Barbosik](https://github.com/Barbosik) has stopped working on this project. So I forked the code and remade it into MultiOgar-Edited. An updated version of the previous MultiOgar.
+Since August of 2016, [Barbosik](https://github.com/Barbosik) has stopped working on his MultiOgar [project](https://github.com/Barbosik/MultiOgar). So I forked the code and remade it into MultiOgar-Edited, an updated version of the previous MultiOgar.
 
 ## Information
 Current version : **1.6.1**
@@ -19,8 +19,8 @@ Please see the issue template before you make an issue, you can find it [here](h
 
 ## Installation
 ### Windows:
-* Download and install node.js: https://nodejs.org/en/download/ 
-* Download this repo
+* Download and install NodeJS: https://nodejs.org/en/download/ 
+* Download this repo.
 * Unzip MultiOgar-Edited code into some folder.
 
 1. Run the win-Install_Dep.bat file.

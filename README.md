@@ -2,7 +2,7 @@
 
 A fast, open source server that supports multiple protocol versions and smooth vanilla physics.
 
-Since August of 2016, [Barbosik](https://github.com/Barbosik) has stopped working on this project. So I forked the code and remade it into MultiOgar-Edited. An updated version of the previous MultiOgar.
+Since August of 2016, [Barbosik](https://github.com/Barbosik) has stopped working on this [project](https://github.com/Barbosik/MultiOgar). So I forked the code and remade it into MultiOgar-Edited. An updated version of the previous MultiOgar.
 
 ## Information
 Current version : **1.6.1**

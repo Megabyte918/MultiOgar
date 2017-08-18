@@ -1,3 +1,6 @@
+"use strict";
+let minutes = 0;
+
 function ServerStat(playerTracker) {
     this.playerTracker = playerTracker;
 }
@@ -23,7 +26,7 @@ ServerStat.prototype.build = function (protocol) {
     var obj = {
         'name': gameServer.config.serverName,
         'mode': gameServer.gameMode.name,
-        'uptime': process.uptime() >>> 0,
+        'uptime': minutes,
         'update': gameServer.updateTimeAvg.toFixed(3),
         'playersTotal': totalPlayers,
         'playersAlive': alivePlayers,
@@ -38,3 +41,17 @@ ServerStat.prototype.build = function (protocol) {
     writer.writeStringZeroUtf8(json);   // JSON
     return writer.toBuffer();
 };
+
+function timer() {
+    let seconds = 0;
+
+    setInterval(function() {
+        seconds++;
+        if (seconds === 60) {
+            seconds = 0;
+            minutes++;
+            console.log(minutes);
+        }
+    }, 1000);
+}
+timer();

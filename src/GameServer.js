@@ -84,6 +84,7 @@ function GameServer() {
         serverMinionInterval: 1000, // minion detection interval [milliseconds]
         serverScrambleLevel: 1,     // Toggles scrambling of coordinates. 0 = No scrambling, 1 = lightweight scrambling. 2 = full scrambling (also known as scramble minimap); 3 - high scrambling (no border)
         playerBotGrow: 0,           // Cells greater than 625 mass cannot grow from cells under 17 mass (set to 1 to disable)
+        badWordFilter: 1,           // Toggle whether you enable bad word filter (set to 0 to disable)
         
         /** BORDER **/
         borderWidth: 14142.135623730952,  // Map border size (Vanilla value: 14142)
@@ -498,7 +499,7 @@ GameServer.prototype.onChatMessage = function(from, to, message) {
             }
         }
     }
-    if (this.checkBadWord(message) && from) {
+    if (this.checkBadWord(message) && from && this.config.badWordFilter) {
         this.sendChatMessage(null, from, "Message failed - Please remove any profanity from your message then try again.");
         return;
     }

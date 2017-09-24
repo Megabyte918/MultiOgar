@@ -122,6 +122,11 @@ Commands.list = {
                     "Quad nodes:     " + fillChar(scanNodeCount(gameServer.quadTree), " ", 4, true)+"\n"+
                     "Quad items:     " + fillChar(scanItemCount(gameServer.quadTree), " ", 4, true));
     },
+    restart: function(gameServer) {
+        Logger.warn("Restarting server...");
+        gameServer.wsServer.close();
+        process.exit(3)
+    },
     reset: function(gameServer, split) {
         Logger.warn("Removed " + gameServer.nodes.length + " nodes");
         // Remove all nodes in the entire server

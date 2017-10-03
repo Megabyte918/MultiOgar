@@ -80,7 +80,7 @@ Version 1.2.8 (Original MultiOgar):
 * Memory usage: 70 MB
 * MS response time: Minimum of around 78
 
-Version 1.6.0 (MultiOgar-Edited):
+Version 1.6.1 (MultiOgar-Edited):
 * 1000 bots, 500 viruses, 1000 foods, map 14142x14142
 * Works very-very smooth, speed decreases gradually as bots get larger.
 * CPU load: 24% (x2 cores)

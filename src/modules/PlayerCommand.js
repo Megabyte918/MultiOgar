@@ -59,6 +59,8 @@ var playerCommands = {
             this.writeLine("/minion - gives yourself or other player minions");
             this.writeLine("/minion remove - removes all of your minions or other players minions");
             this.writeLine("/status - Shows Status of the Server");
+            this.writeLine("/pl - Shows list players,bots,minions");
+            this.writeLine("/playerlist - Shows list players,bots,minions");
             this.writeLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         }
         if (this.playerTracker.userRole == UserRoleEnum.ADMIN) {
@@ -75,6 +77,9 @@ var playerCommands = {
             this.writeLine("/addbot - Adds AI Bots to the Server");
             this.writeLine("/shutdown - SHUTDOWNS THE SERVER");
             this.writeLine("/status - Shows Status of the Server");
+            this.writeLine("/pl - Shows list players,bots,minions");
+            this.writeLine("/playerlist - Shows list players,bots,minions");
+  
             this.writeLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         } else {
             this.writeLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
@@ -102,6 +107,58 @@ var playerCommands = {
             this.writeLine("Your skin was removed");
         else
             this.writeLine("Your skin set to " + skinName);
+    },
+     pl: function(args) {
+        if (this.playerTracker.userRole != UserRoleEnum.ADMIN && this.playerTracker.userRole != UserRoleEnum.MODER) {
+            this.writeLine("ERROR: access denied!");
+            return;
+        }
+
+        var clients = this.gameServer.clients;
+        clients.sort(function(a, b) { return a.playerTracker.pID - b.playerTracker.pID; });
+        for (var i = 0; i < clients.length; ++i) {
+            var client = clients[i].playerTracker;
+            var socket = clients[i];
+            var ip = client.isMi ? "[MINION]" : "BOT";
+
+            if (socket.isConnected && !client.isMi) {
+                ip = socket.remoteAddress;
+            }
+
+            var protocol = this.gameServer.clients[i].packetHandler.protocol;
+            if (!protocol) {
+                protocol = "?";
+            }
+
+            var data = "ID: " + client.pID + " - NICK: " + client._name + " - IP: " + ip;
+            this.writeLine(data);
+        }
+    },
+    playerlist: function(args) {
+        if (this.playerTracker.userRole != UserRoleEnum.ADMIN && this.playerTracker.userRole != UserRoleEnum.MODER) {
+            this.writeLine("ERROR: access denied!");
+            return;
+        }
+
+        var clients = this.gameServer.clients;
+        clients.sort(function(a, b) { return a.playerTracker.pID - b.playerTracker.pID; });
+        for (var i = 0; i < clients.length; ++i) {
+            var client = clients[i].playerTracker;
+            var socket = clients[i];
+            var ip = client.isMi ? "[MINION]" : "BOT";
+
+            if (socket.isConnected && !client.isMi) {
+                ip = socket.remoteAddress;
+            }
+
+            var protocol = this.gameServer.clients[i].packetHandler.protocol;
+            if (!protocol) {
+                protocol = "?";
+            }
+
+            var data = "ID: " + client.pID + " - NICK: " + client._name + " - IP: " + ip;
+            this.writeLine(data);
+        }
     },
     kill: function (args) {
         if (!this.playerTracker.cells.length) {

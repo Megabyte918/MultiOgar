@@ -49,7 +49,7 @@ Virus.prototype.onEaten = function (c) {
     // Monotone explosion(s)
     else if (c._size > 216) {
         // virus explosion multipliers
-        var exp = (4.55 - 4.55) + 3.885;
+        var exp = 4;
         while (threshold / exp > 24) {
             threshold /= exp;
             exp = 2;

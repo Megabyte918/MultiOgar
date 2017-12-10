@@ -43,11 +43,13 @@ MinionPlayer.prototype.checkConnection = function () {
     
     // pellet-collecting mode
     if (this.owner.collectPellets) {
+	    if (this.gameServer.tickCounter % 10 == 0)
 	this.viewNodes = [];
 	var self = this;
 	this.viewBox = this.owner.viewBox;
 	this.gameServer.quadTree.find(this.viewBox, function (check) {
-            if (check.cellType == 1) self.viewNodes.push(check);
+            if (check.cellType == 1)
+		self.viewNodes.push(check);
         });
 	var bestDistance = 1e999;
 	for (var i in this.viewNodes) {

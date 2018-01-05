@@ -49,7 +49,7 @@ MinionPlayer.prototype.checkConnection = function () {
 	this.gameServer.quadTree.find(this.viewBox, function (check) {
             if (check.cellType == 1) self.viewNodes.push(check);
         });
-	var bestDistance = 1e999;
+	var bestDistance = 1e9;
 	for (var i in this.viewNodes) {
 	    var cell = this.viewNodes[i];
 	    var dx = this.cells[0].position.x - cell.position.x;

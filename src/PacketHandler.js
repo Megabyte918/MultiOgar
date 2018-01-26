@@ -279,7 +279,7 @@ PacketHandler.prototype.setNickname = function (text) {
         if (text[0] == '<' && (n = text.indexOf('>', 1)) >= 1) {
             var inner = text.slice(1, n);
             if (n > 1)
-                skinName = (inner == "r") ? this.getRandomSkin() : inner;
+                skinName = (inner == "r") ? this.getRandomSkin() : "%" + inner;
             else
                 skinName = "";
             userName = text.slice(n + 1);

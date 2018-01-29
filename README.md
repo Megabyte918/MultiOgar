@@ -18,6 +18,13 @@ MultiOgar-Edited code however, is based on MultiOgar code that has been heavily 
 
 >---
 
+## Discord Server
+
+**Yes, we have a Discord Server. This will be used to give you extra assistance and help you with your custom code. Join here: https://discord.gg/27v68Sb**
+
+>---
+
+
 # Installation
 ## Windows
 

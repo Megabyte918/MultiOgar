@@ -280,10 +280,18 @@ GameServer.prototype.onClientSocketOpen = function (ws, req) {
             return;
         }
     }
-    if (this.config.clientBind.length && req.headers.origin.indexOf(this.clientBind) < 0) {
+
+    var allowedClient = 0;
+    for(var cnt = 0; cnt < this.clientBind.length; cnt++) {
+        if(req.headers.origin.indexOf(this.clientBind[cnt]) >= 0) {
+            allowedClient = 1;
+        }
+    }
+    if (this.config.clientBind.length && !allowedClient) {
         ws.close(1000, "Client not allowed");
         return;
     }
+
     ws.isConnected = true;
     ws.remoteAddress = ws._socket.remoteAddress;
     ws.remotePort = ws._socket.remotePort;

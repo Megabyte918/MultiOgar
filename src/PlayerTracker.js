@@ -127,7 +127,7 @@ PlayerTracker.prototype.getScale = function() {
         scale += this.cells[i]._size;
         this._score += this.cells[i]._mass;
     }
-    if (!scale) return scale = this._score = 0; // reset
+    if (!scale) return scale = this._score = 0.4; // reset scale
     else return this._scale = Math.pow(Math.min(64 / scale, 1), 0.4);
 };
 
@@ -275,7 +275,7 @@ PlayerTracker.prototype.sendUpdate = function() {
         var node = this.viewNodes[newIndex];
         if (node.isRemoved) continue;
         // only send update for moving or player nodes
-        if (node.isMoving || node.cellType == 0 || node.cellType == 2)
+        if (node.isMoving || node.cellType == 0 || node.cellType == 2 || this.gameServer.config.serverGamemode == 3 && node.cellType == 1)
             updNodes.push(node);
         newIndex++;
         oldIndex++;

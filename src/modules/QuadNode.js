@@ -23,7 +23,7 @@ module.exports = QuadNode;
 QuadNode.prototype.insert = function (item) {
     if (this.childNodes.length != 0) {
         var quad = this.getQuad(item.bound);
-        if (quad != -1)
+        if (quad !== -1)
             return this.childNodes[quad].insert(item);
     }
     this.items.push(item);
@@ -50,7 +50,7 @@ QuadNode.prototype.insert = function (item) {
 };
 
 QuadNode.prototype.remove = function (item) {
-    if (item._quadNode != this)
+    if (item._quadNode !== this)
         return item._quadNode.remove(item);
     this.items.splice(this.items.indexOf(item), 1);
     item._quadNode = null;
@@ -59,7 +59,7 @@ QuadNode.prototype.remove = function (item) {
 QuadNode.prototype.find = function (bound, callback) {
     if (this.childNodes.length != 0) {
         var quad = this.getQuad(bound);
-        if (quad != -1) {
+        if (quad !== -1) {
             this.childNodes[quad].find(bound, callback);
         } else {
             for (var i = 0; i < this.childNodes.length; i++) {

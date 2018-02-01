@@ -168,4 +168,6 @@ function parseCommands(str) {
     } else {
         Logger.warn("Invalid Command!");
     }
-}
+};
+
+exports.gameServer = gameServer;

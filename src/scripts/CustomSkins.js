@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Agar.io custom skins
-// @version      0.2
+// @version      0.3
 // @description  Custom Skins for Agar.io
 // @author       Megabyte918
 // @match        *.agar.io/*
@@ -41,9 +41,9 @@ if (localStorage.getItem("skin") && localStorage.getItem("skin").match(/(http(s?
 if(document.getElementById('statsContinue')){
     document.getElementById('statsContinue').addEventListener("click", function(){i=setInterval(function(){init();},500);}, false);
 }
-if (document.getElementsByClassName('btn btn-play-guest btn-success btn-needs-server')[0]) {
-    document.getElementsByClassName('btn btn-play-guest btn-success btn-needs-server')[0].addEventListener("click", setSkin, false);
+if (document.getElementsByClassName('btn btn-play-guest btn-success')[0]) {
+    document.getElementsByClassName('btn btn-play-guest btn-success')[0].addEventListener("click", setSkin, false);
 }
-if (document.getElementsByClassName('btn btn-play btn-primary btn-needs-server')[0]) {
-    document.getElementsByClassName('btn btn-play btn-primary btn-needs-server')[0].addEventListener("click", setSkin, false);
+if (document.getElementsByClassName('btn btn-play btn-primary')[0]) {
+    document.getElementsByClassName('btn btn-play btn-primary')[0].addEventListener("click", setSkin, false);
 }

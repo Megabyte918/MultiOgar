@@ -109,7 +109,7 @@ Teams.prototype.onCellMove = function (cell, gameServer) {
             var manifold = gameServer.checkCellCollision(cell, check); // Calculation info
             if (manifold != null) { // Collided
                 // Cant eat team members
-                !manifold.cell2.canEat(manifold.cell1);
+                !manifold.check.canEat(manifold.cell);
             }
         }
     }

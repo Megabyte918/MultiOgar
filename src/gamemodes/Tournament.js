@@ -18,6 +18,7 @@ function Tournament() {
     this.gamePhase = 0; // 0 = Waiting for players, 1 = Prepare to start, 2 = Game in progress, 3 = End
     this.contenders = [];
     this.maxContenders = 12;
+    this.isPlayerLb = false;
     
     this.winner;
     this.timer;
@@ -78,6 +79,13 @@ Tournament.prototype.prepare = function (gameServer) {
         }
         
         gameServer.removeNode(node);
+    }
+
+    //Kick all bots for restart.
+    for (var i = 0; i < gameServer.clients.length; i++) {
+        if (gameServer.clients[i].isConnected != null)
+            continue; // verify that the client is a bot
+        gameServer.clients[i].close();
     }
     
     gameServer.bots.loadNames();
@@ -174,6 +182,23 @@ Tournament.prototype.onCellRemove = function (cell) {
     }
 };
 
+Tournament.prototype.updateLB_FFA = function (gameServer, lb) {
+    gameServer.leaderboardType = 49;
+    for (var i = 0, pos = 0; i < gameServer.clients.length; i++) {
+        var player = gameServer.clients[i].playerTracker;
+        if (player.isRemoved || !player.cells.length ||
+            player.socket.isConnected == false || player.isMi)
+            continue;
+
+        for (var j = 0; j < pos; j++)
+            if (lb[j]._score < player._score) break;
+
+        lb.splice(j, 0, player);
+        pos++;
+    }
+    this.rankOne = lb[0];
+};
+
 Tournament.prototype.updateLB = function (gameServer, lb) {
     gameServer.leaderboardType = this.packetLB;
     switch (this.gamePhase) {
@@ -185,6 +210,10 @@ Tournament.prototype.updateLB = function (gameServer, lb) {
                 if (this.timer <= 0) {
                     this.fillBots(gameServer);
                 } else if (this.contenders.length >= this.autoFillPlayers) {
+                    lb[3] = "-----------------";
+                    lb[4] = "Bots joining";
+                    lb[5] = "in";
+                    lb[6] = this.timer.toString();
                     this.timer--;
                 }
             }
@@ -201,14 +230,22 @@ Tournament.prototype.updateLB = function (gameServer, lb) {
             }
             break;
         case 2:
-            lb[0] = "Players Remaining";
-            lb[1] = this.contenders.length + "/" + this.maxContenders;
-            lb[2] = "Time Limit:";
-            lb[3] = this.formatTime(this.timeLimit);
+            if (!this.isPlayerLb) {
+                gameServer.leaderboardType = this.packetLB;
+                lb[0] = "Players Remaining";
+                lb[1] = this.contenders.length + "/" + this.maxContenders;
+                lb[2] = "Time Limit:";
+                lb[3] = this.formatTime(this.timeLimit);
+            } else {
+                this.updateLB_FFA(gameServer, lb);
+            }
             if (this.timeLimit < 0) {
                 // Timed out
-                this.endGameTimeout(gameServer);
+                this.endGame(gameServer);
             } else {
+                if (this.timeLimit % gameServer.config.tourneyLeaderboardToggleTime == 0) {
+                    this.isPlayerLb ^= true;
+                }
                 this.timeLimit--;
             }
             break;
@@ -218,10 +255,12 @@ Tournament.prototype.updateLB = function (gameServer, lb) {
             lb[2] = "for winning!";
             if (this.timer <= 0) {
                 // Reset the game
-                process.exit(3);
+                this.prepare(gameServer);
+                this.endGameTimeout(gameServer);
             } else {
-                lb[3] = "Game restarting in";
-                lb[4] = this.timer.toString();
+                lb[3] = "-----------------";
+                lb[4] = "Game restarting in";
+                lb[5] = this.timer.toString();
                 this.timer--;
             }
             break;
@@ -230,7 +269,7 @@ Tournament.prototype.updateLB = function (gameServer, lb) {
             lb[1] = "Reached!";
             if (this.timer <= 0) {
                 // Reset the game
-                process.exit(3);
+                this.onServerInit(gameServer);
             } else {
                 lb[2] = "Game restarting in";
                 lb[3] = this.timer.toString();

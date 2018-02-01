@@ -10,12 +10,9 @@ function Experimental() {
     
     // Gamemode Specific Variables
     this.nodesMother = [];
-    this.tickMotherSpawn = 0;
-    this.tickMotherUpdate = 0;
     
     // Config
-    this.motherSpawnInterval = 25 * 5;  // How many ticks it takes to spawn another mother cell (5 seconds)
-    this.motherUpdateInterval = 2;     // How many ticks it takes to spawn mother food (1 second)
+    this.motherSpawnInterval = 125; // How many ticks it takes to spawn another mother cell (5 seconds)
     this.motherMinAmount = 10;
 }
 
@@ -59,18 +56,20 @@ Experimental.prototype.onServerInit = function (gameServer) {
 
 Experimental.prototype.onTick = function (gameServer) {
     // Mother Cell Spawning
-    if (this.tickMotherSpawn >= this.motherSpawnInterval) {
-        this.tickMotherSpawn = 0;
+    if ((gameServer.tickCounter % this.motherSpawnInterval) === 0) {
         this.spawnMotherCell(gameServer);
-    } else {
-        this.tickMotherSpawn++;
     }
-    if (this.tickMotherUpdate >= this.motherUpdateInterval) {
-        this.tickMotherUpdate = 0;
-        for (var i = 0; i < this.nodesMother.length; i++) {
-            this.nodesMother[i].onUpdate();
+    var updateInterval;
+    for (var i = 0; i < this.nodesMother.length; ++i) {
+        var motherCell = this.nodesMother[i];
+
+        if (motherCell._size <= motherCell.motherCellMinSize)
+            updateInterval = Math.random() * (50 - 25) + 25;
+        else
+            updateInterval = 2;
+
+        if ((gameServer.tickCounter % ~~updateInterval) === 0) {
+            motherCell.onUpdate();
         }
-    } else {
-        this.tickMotherUpdate++;
     }
 };

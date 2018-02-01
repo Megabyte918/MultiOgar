@@ -1,5 +1,7 @@
 "use strict";
 
+const config = require('./console-plus.json');
+
 //-------------------- auth -----------------
   /**
   * RegExp for basic auth credentials
@@ -117,7 +119,7 @@
   var consoleServer = http.createServer(function (request, response) {
       //  console.log('request starting...');  
       var credentials = auth(request);
-      if (!credentials || credentials.name !== 'admin' || credentials.pass !== 'pass') 
+      if (!credentials || credentials.name !== config.username || credentials.pass !== config.password) 
       {
               response.statusCode = 401;
               response.setHeader('WWW-Authenticate', 'Basic realm="example"');
@@ -136,8 +138,8 @@
         }); 
       } 
 
-  }).listen(1234, function() {
-        console.log(/*(new Date()) + */' consoleServer is listening on port 1234');  
+  }).listen(config.port, function() {
+        console.log(/*(new Date()) + */' consoleServer is listening on port ' + config.port);  
      });
 
 //============== interseption ===============
@@ -174,7 +176,7 @@
         perMessageDeflate: false,
         maxPayload: 4096,
         protocolVersion: 8,
-        origin:'http://127.0.0.1:1234',
+        origin:'http://' + config.ip + ':' + config.port,
         autoAcceptConnections: false
     };
 

@@ -1,15 +1,21 @@
-**BEFORE POSTING A NEW ISSUE, READ THIS**: You will find below few points, that you must follow or provide required info to. If you are not going to provide what we need in format we require your issue will be closed instantly without explanation. Spam is treated with fire.
+# **Please read this notice throughly before creating your issue.**
 
+### Before you create your issue you ***MUST*** follow these rules: 
 
-Helpful checklist to go towards your issue. If there is ** by the line, that means it must be done.
+1. **The issue is in written in English.**
+2. **The issue is directly related to the project.**
+3. **Your issue is not a duplicate of a previous issue.**
+4. **Descriptive information must be provided, so that we can reproduce the error you are experiencing**
+5. **Error logs must be provided if any crashing is experienced.**
 
-- **You have checked [prev issues](https://github.com/Megabyte918/MultiOgar-Edited/issues?q=is%3Aissue+is%3Aclosed) first and you didn't found answer for your problem (if there is something similar put reference links)
-- ** You are using and you have tested the latest version of MultiOgar.
-- **Issue is in English.
-- **Issue is not off-topic, and is related to the project.
-- **You have provided below good description of the error, making sure it is something we can reproduce.
-- You have provided logs if there is crashing happening.
+>**Please note that we will *NOT* provide assistance if the issue is with your own code, your issue WILL be locked if this is the case.**
 
-[Tutorial of how to format text on github](https://guides.github.com/features/mastering-markdown/), to make your issue not only readable but clean and neat so we can understand better what you are trying to tell us.
+# **Issue Formatting**
 
-**Remove all of this text and make the issue when you have understood what to do.**
+**In order for us to provide you with the best assistance we kindly ask you to present your issues in the best way that you can.**
+
+Please read through [this guide](https://guides.github.com/features/mastering-markdown) to learn how you can apply [Markdown](https://en.wikipedia.org/wiki/Markdown) to your issues.
+
+>---
+
+**IF YOU HAVE READ THESE RULES PLEASE DELETE THIS TEXT** 

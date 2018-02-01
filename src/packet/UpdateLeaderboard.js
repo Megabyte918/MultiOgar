@@ -12,7 +12,8 @@ UpdateLeaderboard.prototype.build = function(protocol) {
     switch (this.leaderboardType) {
         case 48:
             // UserText
-            return this.buildUserText(protocol);
+            if (protocol < 11) return this.buildUserText(protocol);
+            else return this.buildUserText14();
         case 49:
             // FFA
             if      (protocol < 6 ) return this.buildFfa5();
@@ -25,18 +26,26 @@ UpdateLeaderboard.prototype.build = function(protocol) {
             return null;
     }
 }
-// UserText protocols 5/6/11/13/14
+// User text all other protocols
 UpdateLeaderboard.prototype.buildUserText = function(protocol) {
     var writer = new BinaryWriter();
-    if      (protocol < 13) writeCount(writer, 0x31, this.leaderboard.length); // 5/6/11
-    else if (protocol < 14) writer.writeUInt8(0x33); // 13
-    else                    writer.writeUInt8(0x35); // 14
+    writeCount(writer, 0x31, this.leaderboard.length);
     for (var i = 0; i < this.leaderboard.length; i++) {
         var item = this.leaderboard[i] || "";
-        if      (protocol < 13) writer.writeUInt32(0); // 5/6/11
-        else if (protocol < 15) writer.writeUInt8(0x02); // 13/14
-        if      (protocol < 6 ) writer.writeStringZeroUnicode(item); // diff encode for 5
-        else                    writer.writeStringZeroUtf8(item);
+        if (protocol < 11) writer.writeUInt32(0);
+        if (protocol < 6) writer.writeStringZeroUnicode(item);
+        else writer.writeStringZeroUtf8(item);
+    }
+    return writer.toBuffer();
+};
+// User text 14
+UpdateLeaderboard.prototype.buildUserText14 = function () {
+    var writer = new BinaryWriter();
+    writer.writeUInt8(0x35);
+    for (var i = 0; i < this.leaderboard.length; i++) {
+        var item = this.leaderboard[i] || "";
+        writer.writeUInt8(0x02);
+        writer.writeStringZeroUtf8(item);
     }
     return writer.toBuffer();
 };

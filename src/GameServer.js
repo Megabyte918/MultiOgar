@@ -68,7 +68,8 @@ function GameServer() {
         mobilePhysics: 0, // Whether or not the server uses mobile agar.io physics
         badWordFilter: 1, // Toggle whether you want the bad word filter on (0 to disable, 1 to enable) 
         serverRestart: 0, // Toggle whether you want your server to auto restart in minutes. (0 to disable)
-
+        serverRestartTimes: '00:00:00 - 06:00:00 - 12:00:00 - 18:00:00', //Restart the server at a certain time of the day (eg: 00:00:00 - 06:00:00 - 12:00:00 - 18:00:00) [Use ' - ' to seperate more restarts by time]
+        
         /** CLIENT **/
         serverMaxLB: 10, // Controls the maximum players displayed on the leaderboard.
         serverChat: 1, // Allows the usage of server chat. 0 = no chat, 1 = use chat.
@@ -585,31 +586,43 @@ GameServer.prototype.mainLoop = function () {
     var tStart = process.hrtime();
     var self = this;
 
+    var date = new Date;
+    var dateFormatted = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+    
+    //Restart times
+    var restarts = this.config.serverRestartTimes + "";
+    this.serverRestartTimes = restarts.split(' - ');
+    
     // Restart
-    if (this.tickCounter > this.config.serverRestart) {
-        var QuadNode = require('./modules/QuadNode.js');
-        this.httpServer = null;
-        this.wsServer = null;
-        this.run = true;
-        this.lastNodeId = 1;
-        this.lastPlayerId = 1;
+    if(this.config.serverRestart  && this.tickCounter > 30) {
+        this.serverRestartTimes.forEach((time) => {
+            if(dateFormatted == time) {
+                var QuadNode = require('./modules/QuadNode.js');
+                this.httpServer = null;
+                this.wsServer = null;
+                this.run = true;
+                this.lastNodeId = 1;
+                this.lastPlayerId = 1;
 
-        for (var i = 0; i < this.clients.length; i++) {
-            var client = this.clients[i];
-            client.close();
-        };
+                for (var i = 0; i < this.clients.length; i++) {
+                    var client = this.clients[i];
+                    client.close();
+                };
 
-        this.nodes = []; 
-        this.nodesVirus = [];
-        this.nodesFood = []; 
-        this.nodesEjected = [];
-        this.nodesPlayer = [];
-        this.movingNodes = [];
-        this.commands;
-        this.tickCounter = 0;
-        this.startTime = Date.now();
-        this.setBorder(this.config.borderWidth, this.config.borderHeight);
-        this.quadTree = new QuadNode(this.border, 64, 32);
+                this.nodes = []; 
+                this.nodesVirus = [];
+                this.nodesFood = []; 
+                this.nodesEjected = [];
+                this.nodesPlayer = [];
+                this.movingNodes = [];
+                this.commands;
+                this.tickCounter = 0;
+                this.startTime = Date.now();
+                this.setBorder(this.config.borderWidth, this.config.borderHeight);
+                this.quadTree = new QuadNode(this.border, 64, 32);
+            }
+        });
+        
     };
 
     // Loop main functions

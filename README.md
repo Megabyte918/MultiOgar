@@ -52,7 +52,7 @@ sudo apt-get update
 sudo apt-get install git
 
 # Install node.js:
-sudo apt-get install nodejs-legacy npm
+sudo apt-get install nodejs-legacy npm 
 
 # Clone MultiOgar-Edited:
 git clone git://github.com/Megabyte918/MultiOgar-Edited.git
@@ -64,6 +64,14 @@ npm install
 # Run the server:
 cd src
 sudo node index.js
+```
+## Android(Termux) in Blob
+```bash
+# Installing server
+apt-get update && apt-get install nodejs-legacy npm git && git clone git://github.com/Megabyte918/MultiOgar-Edited.git && cd MultiOgar-Edited && npm install && cd src && node index.js
+
+# Next time to start server write 
+cd MultiOgar-Edited/src && node index.js
 ```
 
 ##### **For further details on running the server, please take a look inside the 'run' folder.**

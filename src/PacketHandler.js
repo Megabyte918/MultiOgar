@@ -220,12 +220,8 @@ PacketHandler.prototype.processMouse = function () {
         client.mouse.y = reader.readInt16() - client.scrambleY;
     } else if (this.mouseData.length === 21) {
         // protocol 4
-        var x = reader.readDouble() - client.scrambleX;
-        var y = reader.readDouble() - client.scrambleY;
-        if (!isNaN(x) && !isNaN(y)) {
-            client.mouse.x = x;
-            client.mouse.y = y;
-        }
+        client.mouse.x = ~~reader.readDouble() - client.scrambleX;
+        client.mouse.y = ~~reader.readDouble() - client.scrambleY;
     }
     this.mouseData = null;
 };

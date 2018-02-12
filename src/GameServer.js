@@ -68,7 +68,7 @@ function GameServer() {
         mobilePhysics: 0, // Whether or not the server uses mobile agar.io physics
         badWordFilter: 1, // Toggle whether you want the bad word filter on (0 to disable, 1 to enable) 
         serverRestart: 0, // Toggle whether you want your server to auto restart in minutes. (0 to disable)
-        serverRestartTimes: '00:00:00 - 06:00:00 - 12:00:00 - 18:00:00', //Restart the server at a certain time of the day (eg: 00:00:00 - 06:00:00 - 12:00:00 - 18:00:00) [Use ' - ' to seperate more restarts by time]
+        serverRestartTimes: '', //Restart the server at a certain time of the day (eg: 0:0:0 - 6:0:0 - 12:0:0 - 18:0:0) [Use ' - ' to seperate more restarts by time]
         
         /** CLIENT **/
         serverMaxLB: 10, // Controls the maximum players displayed on the leaderboard.
@@ -537,12 +537,11 @@ GameServer.prototype.onChatMessage = function (from, to, message) {
 
 GameServer.prototype.checkBadWord = function (value) {
     if (!value) return false;
-    value = value.toLowerCase().trim();
-    if (!value) return false;
-    var split = value.split(" ");
+    value = " " + value.toLowerCase().trim() + " ";
     for (var i = 0; i < this.badWords.length; i++) {
-        for (var j = 0; j < split.length; j++)
-            if (split[j] === this.badWords[i]) return true;
+        if (value.indexOf(this.badWords[i]) >= 0) {
+            return true;
+        }
     }
     return false;
 };
@@ -596,22 +595,25 @@ GameServer.prototype.mainLoop = function () {
     // Restart
     if(this.config.serverRestart  && this.tickCounter > 30) {
         this.serverRestartTimes.forEach((time) => {
-            if(dateFormatted == time) {
+            if (dateFormatted == time) {
                 var QuadNode = require('./modules/QuadNode.js');
                 this.httpServer = null;
                 this.wsServer = null;
                 this.run = true;
                 this.lastNodeId = 1;
                 this.lastPlayerId = 1;
-
+                if (this.config.serverBots) {
+                    for (var i = 0; i < this.config.serverBots; i++)
+                        this.bots.addBot();
+                    Logger.info("Added " + this.config.serverBots + " player bots");
+                };
                 for (var i = 0; i < this.clients.length; i++) {
                     var client = this.clients[i];
                     client.close();
                 };
-
-                this.nodes = []; 
+                this.nodes = [];
                 this.nodesVirus = [];
-                this.nodesFood = []; 
+                this.nodesFood = [];
                 this.nodesEjected = [];
                 this.nodesPlayer = [];
                 this.movingNodes = [];
@@ -622,7 +624,7 @@ GameServer.prototype.mainLoop = function () {
                 this.quadTree = new QuadNode(this.border, 64, 32);
             }
         });
-        
+
     };
 
     // Loop main functions
@@ -1072,10 +1074,10 @@ GameServer.prototype.loadFiles = function () {
             var words = fs.readFileSync(fileNameBadWords, 'utf-8');
             words = words.split(/[\r\n]+/);
             words = words.map(function (arg) {
-                return arg.trim().toLowerCase();
+                return " " + arg.trim().toLowerCase() + " "; // Formatting
             });
             words = words.filter(function (arg) {
-                return !!arg;
+                return arg.length > 2;
             });
             this.badWords = words;
             Logger.info(this.badWords.length + " bad words loaded");

@@ -58,9 +58,8 @@ Rainbow.prototype.onTick = function (gameServer) {
         var node = gameServer.nodes[i];
         if (!node) continue;
         if ((gameServer.tickCounter % 10) === 0) {
-            this.spawnMotherCell(gameServer);
+            this.changeColor(node, gameServer);
         }
     }
-        this.changeColor(node, gameServer);
-    };
 };
+

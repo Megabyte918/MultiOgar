@@ -179,10 +179,6 @@ GameServer.prototype.start = function () {
     this.gameMode = Gamemode.get(this.config.serverGamemode);
     this.gameMode.onServerInit(this);
 
-    // Client Binding
-    var bind = this.config.clientBind + "";
-    this.clientBind = bind.split(' - ');
-
     // Start the server
     this.httpServer = http.createServer();
     var wsOptions = {
@@ -282,13 +278,7 @@ GameServer.prototype.onClientSocketOpen = function (ws, req) {
         }
     }
 
-    var allowedClient = 0;
-    this.clientBind.forEach((client) => {
-        if(req.headers.origin.indexOf(client) >= 0) {
-            allowedClient = 1;
-        }
-    });
-    if (this.config.clientBind.length && !allowedClient) {
+    if (this.config.clientBind.length && !this.config.clientBind.includes(req.headers.origin)) {
         ws.close(1000, "Client not allowed");
         return;
     }

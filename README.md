@@ -1,6 +1,6 @@
 # MultiOgar-Edited
 
-[![Discord](https://img.shields.io/badge/chat-Discord-green.svg)](https://discord.gg/27v68Sb)
+[![Discord](https://discordapp.com/api/guilds/407210435721560065/embed.png?style=banner2)](https://discord.gg/27v68Sb)
 
 A fast, open source [Agar.io](http://agar.io/) server that supports multiple protocol versions and smooth vanilla physics.
 

@@ -133,6 +133,7 @@ function GameServer() {
         playerDisconnectTime: -1, // Time in seconds before a disconnected player's cell is removed (Set to -1 to never remove)
         playerMaxNickLength: 15, // Maximum nick length
         splitVelocity: 780, // Velocity of splitting cells (speed and distance)
+        gravitationalPushsplits: 0, // Allows for "gravitational pushsplits"
 
         /** MINIONS **/
         minionStartSize: 31.6227766017, // Start size of minions (mass = 32*32/100 = 10.24)
@@ -823,6 +824,11 @@ GameServer.prototype.resolveCollision = function (m) {
         return; // too far => can't eat
     }
 
+    // gravitational pushsplits
+    if (!check.canEat(cell) || cell.getAge() < this.config.gravitationalPushsplits && check.cellType == 0) {
+        return;
+    }
+    
     // collision owned => ignore, resolve, or remerge
     if (cell.owner && cell.owner == check.owner) {
         if (cell.getAge() < 13 || check.getAge() < 13)

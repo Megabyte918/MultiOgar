@@ -820,19 +820,17 @@ GameServer.prototype.resolveCollision = function (m) {
 
     // check eating distance
     check.div = this.config.mobilePhysics ? 20 : 3;
-    if (m.d >= check._size - cell._size / check.div) {
+    if (m.d >= check._size - cell._size / check.div)
         return; // too far => can't eat
-    }
 
     // gravitational pushsplits
-    if (!check.canEat(cell) || cell.getAge() < this.config.gravitationalPushsplits && check.cellType == 0) {
+    if (this.config.gravitationalPushsplits && (check.canEat(cell) || cell.getAge() < 1 && check.cellType == 0))
         return;
-    }
     
     // collision owned => ignore, resolve, or remerge
     if (cell.owner && cell.owner == check.owner) {
         if (cell.getAge() < 13 || check.getAge() < 13)
-            return; // just splited => ignore
+            return; // just split => ignore
     } else if (check._size < cell._size * 1.15 || !check.canEat(cell))
         return; // Cannot eat or cell refuses to be eaten
 

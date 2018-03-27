@@ -50,13 +50,15 @@ MotherCell.prototype.onUpdate = function () {
             y: this.position.y + size1 * Math.cos(angle)
         };
         
-        // Spawn food
-        var food = new Food(this.gameServer, null, pos, size2);
-        food.color = this.gameServer.getRandomColor();
-        this.gameServer.addNode(food);
-        
-        // Eject to random distance
-        food.setBoost(32 + 42 * Math.random(), angle);
+        if(size1 > this.motherCellMinSize) {
+            // Spawn food
+            var food = new Food(this.gameServer, null, pos, size2);
+            food.color = this.gameServer.getRandomColor();
+            this.gameServer.addNode(food);
+
+            // Eject to random distance
+            food.setBoost(32 + 42 * Math.random(), angle);
+        }
         
         if (this.gameServer.nodesFood.length >= maxFood || size1 <= this.motherCellMinSize) {
             break;

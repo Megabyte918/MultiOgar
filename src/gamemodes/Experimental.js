@@ -8,9 +8,6 @@ function Experimental() {
     this.name = "Experimental";
     this.specByLeaderboard = true;
     
-    // Gamemode Specific Variables
-    this.nodesMother = [];
-    
     // Config
     this.motherSpawnInterval = 125; // How many ticks it takes to spawn another mother cell (5 seconds)
     this.motherMinAmount = 10;
@@ -23,7 +20,7 @@ Experimental.prototype = new FFA();
 
 Experimental.prototype.spawnMotherCell = function (gameServer) {
     // Checks if there are enough mother cells on the map
-    if (this.nodesMother.length >= this.motherMinAmount) {
+    if (gameServer.nodesMother.length >= this.motherMinAmount) {
         return;
     }
     // Spawn if no cells are colliding
@@ -45,12 +42,12 @@ Experimental.prototype.onServerInit = function (gameServer) {
         this.setBoost(220, prey.boostDirection.angle());
     };
     Entity.MotherCell.prototype.onAdd = function () {
-        self.nodesMother.push(this);
+        gameServer.nodesMother.push(this);
     };
     Entity.MotherCell.prototype.onRemove = function () {
-        var index = self.nodesMother.indexOf(this);
+        var index = gameServer.nodesMother.indexOf(this);
         if (index != -1) 
-            self.nodesMother.splice(index, 1);
+            gameServer.nodesMother.splice(index, 1);
     };
 };
 
@@ -60,8 +57,8 @@ Experimental.prototype.onTick = function (gameServer) {
         this.spawnMotherCell(gameServer);
     }
     var updateInterval;
-    for (var i = 0; i < this.nodesMother.length; ++i) {
-        var motherCell = this.nodesMother[i];
+    for (var i = 0; i < gameServer.nodesMother.length; ++i) {
+        var motherCell = gameServer.nodesMother[i];
 
         if (motherCell._size <= motherCell.motherCellMinSize)
             updateInterval = Math.random() * (50 - 25) + 25;

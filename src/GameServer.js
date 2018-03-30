@@ -22,6 +22,7 @@ function GameServer() {
     this.largestClient = null; // Required for spectators
     this.nodes = []; // Total nodes
     this.nodesVirus = []; // Virus nodes
+    this.nodesMother = []; // MotherCell nodes
     this.nodesFood = []; // Food nodes
     this.nodesEjected = []; // Ejected nodes
     this.nodesPlayer = []; // Player nodes
@@ -603,6 +604,7 @@ GameServer.prototype.mainLoop = function () {
                 };
                 this.nodes = [];
                 this.nodesVirus = [];
+                this.nodesMother = [];
                 this.nodesFood = [];
                 this.nodesEjected = [];
                 this.nodesPlayer = [];

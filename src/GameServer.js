@@ -43,6 +43,7 @@ function GameServer() {
     this.mainLoopBind = null;
     this.tickCounter = 0;
     this.disableSpawn = false;
+    this.nextRestart = Infinity;
 
     // Config
     this.config = {
@@ -66,8 +67,9 @@ function GameServer() {
         serverStatsPort: 88, // Port for stats server. Having a negative number will disable the stats server.
         serverStatsUpdate: 60, // Update interval of server stats in seconds
         mobilePhysics: 0, // Whether or not the server uses mobile agar.io physics
-        badWordFilter: 1, // Toggle whether you want the bad word filter on (0 to disable, 1 to enable) 
+        badWordFilter: 1, // Toggle whether you want the bad word filter on (0 to disable, 1 to enable)
         serverRestart: 0, // Toggle whether you want your server to auto restart in minutes. (0 to disable)
+        serverRestartTimes: '', // Restart the server at a certain time of the day HH:MM (eg: 06:00 - 12:00 - 18:00) [Use ' - ' to seperate more restarts by time] Must be in least to greatest order.
 
         /** CLIENT **/
         serverMaxLB: 10, // Controls the maximum players displayed on the leaderboard.
@@ -200,6 +202,48 @@ GameServer.prototype.start = function () {
     if (this.config.serverStatsPort > 0) {
         this.startStatsServer(this.config.serverStatsPort);
     }
+    this.nextRestart = this.getNextRestart();
+};
+
+GameServer.prototype.restart = function () {
+    var QuadNode = require('./modules/QuadNode.js');
+    this.httpServer = null;
+    this.wsServer = null;
+    this.run = true;
+    this.lastNodeId = 1;
+    this.lastPlayerId = 1;
+    if (this.config.serverBots) {
+        for (var i = 0; i < this.config.serverBots; i++)
+            this.bots.addBot();
+        Logger.info("Added " + this.config.serverBots + " player bots");
+    };
+    for (var i = 0; i < this.clients.length; i++) {
+        var client = this.clients[i];
+        client.close();
+    };
+    this.nodes = [];
+    this.nodesVirus = [];
+    this.nodesFood = [];
+    this.nodesEjected = [];
+    this.nodesPlayer = [];
+    this.movingNodes = [];
+    this.commands;
+    this.tickCounter = 0;
+    this.startTime = Date.now();
+    this.setBorder(this.config.borderWidth, this.config.borderHeight);
+    this.quadTree = new QuadNode(this.border, 64, 32);
+    this.nextRestart = this.getNextRestart();
+};
+
+GameServer.prototype.getNextRestart = function () {
+    const dateFromHHMM = (hhmm, now = new Date()) => {
+        return new Date(now.toString().replace(/\d\d:\d\d:\d\d/, hhmm + ":00"));
+    };
+    const nowDate = new Date();
+    const now = nowDate.getTime();
+    let restartTimes = this.config.serverRestartTimes.toString().split(" - ");
+    restartTimes = restartTimes.map(a => dateFromHHMM(a, nowDate).getTime());
+    return restartTimes.find(a => a > now) || Infinity;
 };
 
 GameServer.prototype.onHttpServerOpen = function () {
@@ -543,7 +587,7 @@ GameServer.prototype.sendChatMessage = function (from, to, message) {
         if (!to || to == this.clients[i].playerTracker) {
             var Packet = require('./packet');
             if (this.config.separateChatForTeams && this.gameMode.haveTeams) {
-                //  from equals null if message from server 
+                //  from equals null if message from server
                 if (from == null || from.team === this.clients[i].playerTracker.team) {
                     this.clients[i].packetHandler.sendPacket(new Packet.ChatMessage(from, message));
                 }
@@ -577,34 +621,9 @@ GameServer.prototype.mainLoop = function () {
     var self = this;
 
     // Restart
-    if (this.tickCounter > this.config.serverRestart) {
-        var QuadNode = require('./modules/QuadNode.js');
-        this.httpServer = null;
-        this.wsServer = null;
-        this.run = true;
-        this.lastNodeId = 1;
-        this.lastPlayerId = 1;
-        if (this.config.serverBots) {
-            for (var i = 0; i < this.config.serverBots; i++)
-                this.bots.addBot();
-            Logger.info("Added " + this.config.serverBots + " player bots");
-        };
-        for (var i = 0; i < this.clients.length; i++) {
-            var client = this.clients[i];
-            client.close();
-        };
-        this.nodes = []; 
-        this.nodesVirus = [];
-        this.nodesFood = []; 
-        this.nodesEjected = [];
-        this.nodesPlayer = [];
-        this.movingNodes = [];
-        this.commands;
-        this.tickCounter = 0;
-        this.startTime = Date.now();
-        this.setBorder(this.config.borderWidth, this.config.borderHeight);
-        this.quadTree = new QuadNode(this.border, 64, 32);
-    };
+    if (this.tickCounter > this.config.serverRestart || this.stepDateTime > this.nextRestart) {
+        this.restart();
+    }
 
     // Loop main functions
     if (this.run) {

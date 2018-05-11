@@ -23,7 +23,7 @@ ServerStat.prototype.build = function (protocol) {
     var obj = {
         'name': gameServer.config.serverName,
         'mode': gameServer.gameMode.name,
-        'uptime': process.uptime() >>> 0,
+        'uptime': Math.round((gameServer.stepDateTime - gameServer.startTime) / 1000),
         'update': gameServer.updateTimeAvg.toFixed(3),
         'playersTotal': totalPlayers,
         'playersAlive': alivePlayers,

@@ -2,7 +2,7 @@
 
 [![Discord](https://discordapp.com/api/guilds/407210435721560065/embed.png?style=banner2)](https://discord.gg/66X2ESb)
 
-A fast, open source [Agar.io](http://agar.io/) server that supports multiple protocol versions and smooth vanilla physics.
+A slow, open source [Agar.io](http://agar.io/) server that supports multiple protocol versions and smooth vanilla physics.
 
 Since August of 2016, [Barbosik](https://github.com/Barbosik) has stopped working on this project. So I forked the code and remade it into MultiOgar-Edited, an updated version of the previous MultiOgar.
 

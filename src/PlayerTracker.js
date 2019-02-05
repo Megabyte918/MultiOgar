@@ -135,7 +135,6 @@ PlayerTracker.prototype.joinGame = function(name, skin) {
     if (this.cells.length) return;
 
     if (skin) this.setSkin(skin);
-    if (!name) name = "An unnamed cell";
     this.setName(name);
     this.spectate = false;
     this.freeRoam = false;

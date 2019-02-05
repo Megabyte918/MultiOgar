@@ -75,8 +75,8 @@ UpdateLeaderboard.prototype.buildFfa6 = function() {
         var name = item._nameUtf8;
         var id = item == this.playerTracker ? 1 : 0;
         writer.writeUInt32(id >>> 0); // isMe flag
-        if (name) writer.writeBytes(name);
-        else writer.writeUInt8(0);
+        writer.writeBytes(name || "An unnamed cell");
+        writer.writeUInt8(0);
     }
     return writer.toBuffer();
 };

@@ -2,6 +2,7 @@ const Discord = require("discord.js");
 const Commands = require("../src/modules/CommandList");
 const index = require("../src/index");
 const Logger = require("../src/modules/Logger");
+
 const config = {
     role: "Moderator",
     token: "Token here"
@@ -10,24 +11,23 @@ const config = {
 class Bot {
     constructor() {
         this.client = new Discord.Client();
+        this.client.once("ready", this.onReady.bind(this));
         this.client.on("message", this.onMessage.bind(this));
-        this.client.on("ready", this.onReady.bind(this));
         process.on("error", this.onError.bind(this));
         this.client.login(config.token);
     };
+
     onMessage(message) {
         const args = message.content.split(/\s+/g);
         var execute = Commands[args[0]];
         if (typeof execute != 'undefined' && message.member.roles.some(r => [config.role].includes(r.name))) {
             execute(index.server, args);
             message.delete();
-        } else {
-            return;
         }
     };
 
     onReady() {
-        Logger.info(`Successfully logged in.`);
+        Logger.info("Successfully logged in.");
         this.client.user.setGame("Helping players");
     };
 

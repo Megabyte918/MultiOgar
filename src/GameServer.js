@@ -1213,7 +1213,10 @@ GameServer.prototype.pingOgarTracker = function() {
     const { totalPlayers, alivePlayers, spectatePlayers, robotPlayers } = this.getPlayerAmounts();
     const data = {
         port: this.config.serverPort,
-        protocols: {},
+        protocols: {
+            min: 4,
+            max: 18
+        },
         name: this.config.serverName,
         mode: this.gameMode.name,
         start: this.startTime,

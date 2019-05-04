@@ -1207,7 +1207,7 @@ GameServer.prototype.getPlayerAmounts = function() {
     return { totalPlayers, alivePlayers, spectatePlayers, robotPlayers };
 };
 
-// Pings the ogar tracker, should be called on start and every 5 minutes
+// Pings the OgarTracker, should be called on start and every 5 minutes
 // The list is available at https://ogar.glitch.me/tracker
 GameServer.prototype.pingOgarTracker = function() {
     const { totalPlayers, alivePlayers, spectatePlayers, robotPlayers } = this.getPlayerAmounts();
@@ -1233,7 +1233,7 @@ GameServer.prototype.pingOgarTracker = function() {
         port: 80,
         path: '/v1/update',
         method: 'POST'
-    }, 'application/json', JSON.stringify(data), true);
+    }, 'application/json', JSON.stringify(data), false); // https disabled due to unknown issues
 };
 
 // Pings the server tracker, should be called every 30 seconds

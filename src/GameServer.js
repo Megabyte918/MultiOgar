@@ -665,7 +665,10 @@ GameServer.prototype.mainLoop = function () {
     if (((this.tickCounter + 7) % 25) === 0)
         this.updateLeaderboard(); // once per second
 
-    // ping server tracker
+    // ping server trackers
+    if(this.config.serverTracker && (this.tickCounter % 7500) === 0)
+        this.pingOgarTracker(); // once per 1 minute
+
     if (this.config.serverTracker && (this.tickCounter % 750) === 0)
         this.pingServerTracker(); // once per 30 seconds
 
@@ -1183,15 +1186,8 @@ GameServer.prototype.getStats = function () {
     this.stats = JSON.stringify(s);
 };
 
-// Pings the server tracker, should be called every 30 seconds
-// To list us on the server tracker located at http://ogar.mivabe.nl/master
-GameServer.prototype.pingServerTracker = function () {
-    // Get server statistics
-    var os = require('os');
-    var totalPlayers = 0;
-    var alivePlayers = 0;
-    var spectatePlayers = 0;
-    var robotPlayers = 0;
+GameServer.prototype.getPlayerAmounts = function() {
+    let totalPlayers = 0, alivePlayers = 0, spectatePlayers = 0, robotPlayers = 0;
     for (var i = 0, len = this.clients.length; i < len; i++) {
         var socket = this.clients[i];
         if (!socket || socket.isConnected == false)
@@ -1204,6 +1200,40 @@ GameServer.prototype.pingServerTracker = function () {
             else spectatePlayers++;
         }
     }
+    return { totalPlayers, alivePlayers, spectatePlayers, robotPlayers };
+};
+
+// Available at https://ogar.glitch.me/tracker
+GameServer.prototype.pingOgarTracker = function() {
+    const { totalPlayers, alivePlayers, spectatePlayers, robotPlayers } = this.getPlayerAmounts();
+    const data = {
+        port: this.config.serverPort,
+        protocols: {},
+        name: this.config.serverName,
+        mode: this.gameMode.name,
+        start: this.startTime,
+        software: 'MultiOgar-Edited ' + this.version,
+        players: {
+            limit: this.config.serverMaxConnections,
+            bots: robotPlayers,
+            playing: alivePlayers,
+            spectating: spectatePlayers
+        }
+    };
+    trackerRequest({
+        host: 'ogartracker.glitch.me',
+        port: 80,
+        path: '/v1/update',
+        method: 'POST'
+    }, 'application/json', JSON.stringify(data));
+};
+
+// Pings the server tracker, should be called every 30 seconds
+// To list us on the server tracker located at http://ogar.mivabe.nl/master
+GameServer.prototype.pingServerTracker = function () {
+    // Get server statistics
+    var os = require('os');
+    const { totalPlayers, alivePlayers, spectatePlayers, robotPlayers } = this.getPlayerAmounts();
 
     // ogar.mivabe.nl/master
     var data = 'current_players=' + totalPlayers +

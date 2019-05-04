@@ -1,5 +1,5 @@
 // Library imports
-var http = require('http');
+var http = require('http'), https = require('https');
 
 // Project imports
 var Entity = require('./entity');
@@ -13,7 +13,7 @@ function GameServer() {
 
     // Startup
     this.run = true;
-    this.version = '1.6.1';
+    this.version = require('../package').version;
     this.httpServer = null;
     this.lastNodeId = 1;
     this.lastPlayerId = 1;
@@ -200,6 +200,9 @@ GameServer.prototype.start = function () {
     if (this.config.serverStatsPort > 0) {
         this.startStatsServer(this.config.serverStatsPort);
     }
+    
+    this.pingServerTracker();
+    this.pingOgarTracker();
 };
 
 GameServer.prototype.onHttpServerOpen = function () {
@@ -666,11 +669,12 @@ GameServer.prototype.mainLoop = function () {
         this.updateLeaderboard(); // once per second
 
     // ping server trackers
-    if(this.config.serverTracker && (this.tickCounter % 7500) === 0)
-        this.pingOgarTracker(); // once per 1 minute
-
-    if (this.config.serverTracker && (this.tickCounter % 750) === 0)
-        this.pingServerTracker(); // once per 30 seconds
+    if(this.config.serverTracker) {
+        if(this.tickCounter % 7500) === 0)
+            this.pingOgarTracker(); // once per 5 minutes
+        if ((this.tickCounter % 750) === 0)
+            this.pingServerTracker(); // once per 30 seconds
+    }
 
     // update-update time
     var tEnd = process.hrtime(tStart);
@@ -1203,7 +1207,8 @@ GameServer.prototype.getPlayerAmounts = function() {
     return { totalPlayers, alivePlayers, spectatePlayers, robotPlayers };
 };
 
-// Available at https://ogar.glitch.me/tracker
+// Pings the ogar tracker, should be called on start and every 5 minutes
+// The list is available at https://ogar.glitch.me/tracker
 GameServer.prototype.pingOgarTracker = function() {
     const { totalPlayers, alivePlayers, spectatePlayers, robotPlayers } = this.getPlayerAmounts();
     const data = {
@@ -1225,7 +1230,7 @@ GameServer.prototype.pingOgarTracker = function() {
         port: 80,
         path: '/v1/update',
         method: 'POST'
-    }, 'application/json', JSON.stringify(data));
+    }, 'application/json', JSON.stringify(data), true);
 };
 
 // Pings the server tracker, should be called every 30 seconds
@@ -1253,15 +1258,15 @@ GameServer.prototype.pingServerTracker = function () {
         port: 80,
         path: '/master',
         method: 'POST'
-    }, 'application/x-www-form-urlencoded', data);
+    }, 'application/x-www-form-urlencoded', data, false);
 };
 
-function trackerRequest(options, type, body) {
+function trackerRequest(options, type, body, isHttps) {
     if (options.headers == null) options.headers = {};
     options.headers['user-agent'] = 'MultiOgar-Edited' + this.version;
     options.headers['content-type'] = type;
     options.headers['content-length'] = body == null ? 0 : Buffer.byteLength(body, 'utf8');
-    var req = http.request(options, function (res) {
+    var req = (isHttps ? https : http).request(options, function (res) {
         if (res.statusCode != 200) {
             Logger.writeError("[Tracker][" + options.host + "]: statusCode = " + res.statusCode);
             return;

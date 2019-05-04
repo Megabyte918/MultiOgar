@@ -669,8 +669,8 @@ GameServer.prototype.mainLoop = function () {
         this.updateLeaderboard(); // once per second
 
     // ping server trackers
-    if(this.config.serverTracker) {
-        if((this.tickCounter % 7500) === 0)
+    if (this.config.serverTracker) {
+        if ((this.tickCounter % 7500) === 0)
             this.pingOgarTracker(); // once per 5 minutes
         if ((this.tickCounter % 750) === 0)
             this.pingServerTracker(); // once per 30 seconds

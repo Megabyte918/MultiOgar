@@ -52,7 +52,7 @@ class PlayerTracker {
         this.minionSplit = false;
         this.minionEject = false;
         this.minionFrozen = false;
-        this.hasMinions = false;
+        this.hasMinions = server.config.serverMinions > 0;
         // Gamemode function
         if (server) {
             // Player id

@@ -738,7 +738,7 @@ class Server {
             pos = this.randomPos(); // Not safe => retry
         this.addNode(cell);
         // Set initial mouse coords
-        player.mouse = pos.clone();
+        player.mouse.assign(pos);
     }
     willCollide(cell) {
         const x = cell.position.x;

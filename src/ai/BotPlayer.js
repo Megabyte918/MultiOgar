@@ -92,7 +92,7 @@ class BotPlayer extends PlayerTracker {
                 400 - cell._size / 2 - node._size >= distance) {
                 // Splitkill the target
                 this.splitCooldown = 15;
-                this.mouse = node.position.clone();
+                this.mouse.assign(node.position);
                 this.socket.packetHandler.pressSpace = true;
                 return;
             } else {
@@ -102,7 +102,7 @@ class BotPlayer extends PlayerTracker {
         }
 
         // Set bot's mouse position
-        this.mouse = cell.position.sum(result.multiply(900));
+        this.mouse.assign(cell.position.sum(result.multiply(900)));
     }
 }
 module.exports = BotPlayer;

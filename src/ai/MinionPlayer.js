@@ -1,8 +1,9 @@
 const PlayerTracker = require('../PlayerTracker');
 
 class MinionPlayer extends PlayerTracker {
-    constructor(server, socket) {
+    constructor(server, socket, owner) {
         super(server, socket);
+        this.owner = owner;
         this.isMi = true;
         this.socket.isConnected = true;
     };
@@ -11,7 +12,7 @@ class MinionPlayer extends PlayerTracker {
         if(this.socket.isCloseRequest) {
             while(this.cells.length)
                 this.server.removeNode(this.cells[0]);
-            
+
             return this.isRemoved = true;
         };
 
@@ -31,7 +32,6 @@ class MinionPlayer extends PlayerTracker {
         this.socket.packetHandler.pressW = this.owner.minionEject;
 
         this.mouse = this.owner.mouse;
-        
     };
 };
 

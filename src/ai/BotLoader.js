@@ -17,11 +17,11 @@ class BotLoader {
         if(this.socket.isCloseRequest) {
             while(this.cells.length)
                 this.server.removeNode(this.cells[0]);
-            
+
             return this.isRemoved = true;
         };
     };
-    
+
     addBot() {
         // Create a FakeSocket instance and assign it's properties.
         const socket = new FakeSocket(this.server);
@@ -42,7 +42,6 @@ class BotLoader {
         const socket = new FakeSocket(this.server);
         socket.playerTracker = new MinionPlayer(this.server, socket, owner);
         socket.packetHandler = new PacketHandler(this.server, socket);
-        socket.playerTracker.owner = owner;
 
         // Set minion spawn size
         socket.playerTracker.spawnmass = mass || maxSize > defaultSize ? Math.floor(Math.random() * (maxSize - defaultSize) + defaultSize) : defaultSize;
@@ -50,7 +49,7 @@ class BotLoader {
         // Add to client list
         this.server.clients.push(socket);
 
-        // Add to world 
+        // Add to world
         socket.packetHandler.setNickname(name == "" || !name ? this.server.config.defaultName : name);
     };
 };

@@ -169,7 +169,7 @@ class PlayerCommand {
         };
     };
 
-    mass(args) {
+    minion(args) {
         if (this.playerTracker.userRole != UserRoleEnum.ADMIN && this.playerTracker.userRole != UserRoleEnum.MODER) {
             this.writeLine("ERROR: access denied!");
             return;
@@ -258,7 +258,7 @@ class PlayerCommand {
         for (var i = 0; i < add; i++) {
             this.server.bots.addBot();
         }
-        Logger.warn(this.playerTracker.socket.remoteAddress + "ADDED " + add + " BOTS");
+        Logger.warn(this.playerTracker.socket.remoteAddress + " ADDED " + add + " BOTS");
         this.writeLine("Added " + add + " Bots");
     };
 
@@ -283,29 +283,33 @@ class PlayerCommand {
         this.writeLine("Server has been running for " + Math.floor(process.uptime() / 60) + " minutes");
         this.writeLine("Current memory usage: " + Math.round(process.memoryUsage().heapUsed / 1048576 * 10) / 10 + "/" + Math.round(process.memoryUsage().heapTotal / 1048576 * 10) / 10 + " mb");
         this.writeLine("Current game mode: " + this.server.mode.name);
-        this.writeLine(`Update time: ${server.updateTimeAvg.toFixed(3)}ms`);
+        this.writeLine(`Update time: ${this.server.updateTimeAvg.toFixed(3)}ms`);
         this.writeLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
     };
-
-    login(args) {
-        var password = args[1] + "";
-        if (password.length < 1) {
+    processMessage(from, msg) {
+        const invalid = "Invalid command, please use /help to get a list of available commands";
+        msg = msg.slice(1); // remove forward-slash
+        let args = msg.split(" ");
+        const cmd = args[0];
+        if (!this[cmd])
+            return this.server.sendChatMessage(null, from, invalid);
+        this[cmd](args, from);
+    }
+    login(args, player) {
+        var password = args[1];
+        if (!password || !(password = password.trim())) {
             this.writeLine("ERROR: missing password argument!");
             return;
         }
 
         let user = null;
-        if (!password)
-            user = null;
-        password = password.trim();
-        if (!password)
-            user = null;
-        for (var i = 0; i < this.server.userList.length; i++) {
-            user = this.server.userList[i];
-            if (user.password != password)
+        for (const cur of this.server.userList) {
+            if (cur.password != password)
                 continue;
-            if (user.ip && user.ip != ip && user.ip != "*") // * - means any IP
+            if (cur.ip && cur.ip != player.socket.remoteAddress && cur.ip != "*") // * - means any IP
                 continue;
+            user = cur;
+            break;
         }
 
         if (!user) {

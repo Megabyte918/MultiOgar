@@ -350,22 +350,15 @@ class Server {
         }
     }
     onChatMessage(from, to, message) {
-        if (!message)
+        if (!message || !(message = message.trim()))
             return;
-        message = message.trim();
-        if (message === "") {
+        if (!this.config.serverChat || (from && from.isMuted)) {
+            // chat is disabled or player is muted
             return;
         }
         if (from && message.length && message[0] == '/') {
             // player command
-            message = message.slice(1, message.length);
-            if (!from.socket.playerCommand[message])
-                return this.sendChatMessage(null, from, "Invalid command, please use /help to get a list of available commands");
-            from.socket.playerCommand[message](message);
-            return;
-        }
-        if (!this.config.serverChat || (from && from.isMuted)) {
-            // chat is disabled or player is muted
+            from.socket.playerCommand.processMessage(from, message);
             return;
         }
         if (message.length > 64) {

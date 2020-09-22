@@ -75,6 +75,8 @@ class UpdateLeaderboard {
             if (item == this.playerTracker && item.cells.length)
                 id = item.cells[0].nodeId ^ this.playerTracker.scrambleId;
             writer.writeUInt32(id >>> 0); // Player cell Id
+            var score = Math.floor(item._score);
+            writer.writeUInt32(score >>> 0);
             if (name)
                 writer.writeBytes(name);
             else

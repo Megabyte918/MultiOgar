@@ -64,8 +64,8 @@ module.exports = Object.seal({
 // serverWelcome1: First server welcome message
 // serverWelcome2: Second server welcome message (optional, for info, etc)
 // clientBind: Only allow connections to the server from specified client (eg: http://agar.io - http://mywebsite.com - http://more.com) [Use ' - ' to seperate different websites]
-"serverMaxLB": 10,
-"serverChat": 1,
+"serverMaxLB": 30,
+"serverChat": 0,
 "serverChatAscii": 1,
 "separateChatForTeams": 0,
 "serverName": "Ludecat Agar",

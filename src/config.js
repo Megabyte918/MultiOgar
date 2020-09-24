@@ -80,7 +80,7 @@ module.exports = Object.seal({
 // serverMinionInterval: minion detection interval [milliseconds]
 // serverScrambleLevel: Toggles scrambling of coordinates. 0: No scrambling, 1: lightweight scrambling. 2: full scrambling (also known as scramble minimap), 3 - high level scrambling (no border)
 // playerBotGrow: Cells greater than 625 mass cannot grow from players under 17 mass (set to 1 to disable)
-"serverIpLimit": 4,
+"serverIpLimit": 0,
 "serverMinionIgnoreTime": 30,
 "serverMinionThreshold": 10,
 "serverMinionInterval": 1000,

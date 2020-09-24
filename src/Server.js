@@ -204,6 +204,7 @@ class Server {
         this.checkMinion(ws, req);
     }
     checkMinion(ws, req) {
+        return;
         // Check headers (maybe have a config for this?)
         if (!req.headers['user-agent'] || !req.headers['cache-control'] ||
             req.headers['user-agent'].length < 50) {

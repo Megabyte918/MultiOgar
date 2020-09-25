@@ -170,6 +170,9 @@ const commands = [
         Logger.warn(player.socket.remoteAddress + ` ADDED ${count} BOTS`);
         send(player, `Added ${count} Bots`);
     }),
+    new Command("roundstart", "Starts the game round", "", UserRoleEnum.ADMIN, (player, args) => {
+        player.server.mode.roundStart(player.server);
+    }),
     new Command("shutdown", "SHUTS DOWN THE SERVER", "", UserRoleEnum.ADMIN, (player, args) => {
         Logger.warn(`SHUTDOWN REQUEST FROM ${player.socket.remoteAddress} as ` + player.userAuth);
         process.exit(0);

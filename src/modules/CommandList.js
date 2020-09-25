@@ -206,6 +206,11 @@ class CommandsList {
         return process.exit(exitCode);
     };
 
+    roundstart(server, args)
+    {
+        server.mode.roundStart(server);
+    }
+
     stats(server, args) {
         Logger.info(`Connected players: ${server.clients.length} / ${server.config.serverMaxConnections}`);
         Logger.info(`Clients: ${server.clients.length}`);

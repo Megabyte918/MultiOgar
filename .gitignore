@@ -9,3 +9,5 @@ node_modules
 
 # Package-lock
 package-lock.json
+
+fetch_secret.json

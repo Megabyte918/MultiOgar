@@ -22,7 +22,7 @@ jobs:
         uses: easingthemes/ssh-deploy@v2.1.1
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          ARGS: "-rltgoDzvO --delete --exclude 'serverconfig.json'"
+          ARGS: "-rltgoDzvO --delete  --exclude 'fetch_secret.json'"
           SOURCE: "./"
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}

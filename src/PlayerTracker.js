@@ -208,6 +208,10 @@ class PlayerTracker {
         this.server.quadTree.find(this.viewBox, function (check) {
             self.viewNodes.push(check);
         });
+        for (var i = 0; i < this.cells.length; i++) {
+            if (this.viewNodes.indexOf(this.cells[i]) !== -1) continue;
+            this.viewNodes.push(this.cells[i]);
+        }
         this.viewNodes.sort(function (a, b) { return a.nodeId - b.nodeId; });
     }
     sendUpdate() {

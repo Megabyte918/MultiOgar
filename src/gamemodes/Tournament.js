@@ -1,6 +1,6 @@
 const Logger = require('../modules/Logger');
 const fetch = require('node-fetch');
-const fetch_secrets = require('../../fetch_secret.json')
+// const fetch_secrets = require('../../fetch_secret.json')
 var Mode = require('./Mode');
 
 class Tournament extends Mode {
@@ -11,7 +11,9 @@ class Tournament extends Mode {
         this.specByLeaderboard = true;
         this.IsTournament = true;
 
-        this.roundDuration = 3 * 60 * 1000;
+        this.roundDuration = 3 * 60 * 1000; //TODO: Dynamisch über server command (backend interface)
+
+        //TODO: Spiel pausieren (run stoppen und game loop - mach gar nichts wenn pausiert)
 
         this.roundStartTime = null;
     }
@@ -85,17 +87,17 @@ class Tournament extends Mode {
             })
         }
 
-        fetch(fetch_secrets.sheetUrl, {
-            method: 'POST',
-            headers: {
-                Authorization: fetch_secrets.bearer,
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                game: 'Agario',
-                result: results
-            })
-        })
+        // fetch(fetch_secrets.sheetUrl, {
+        //     method: 'POST',
+        //     headers: {
+        //         Authorization: fetch_secrets.bearer,
+        //         'Content-Type': 'application/json',
+        //     },
+        //     body: JSON.stringify({
+        //         game: 'Agario',
+        //         result: results
+        //     })
+        // })
     }
 }
 

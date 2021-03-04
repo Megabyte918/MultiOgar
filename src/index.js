@@ -7,6 +7,7 @@ const Server = require("./Server.js");
 const Logger = require("./modules/Logger.js");
 const express = require("express")
 const path = require("path");
+const {uuid} = require("./uuidForBackendInterface.json")
 
 
 
@@ -28,23 +29,31 @@ inputInterface.on("line", (input) => {
     };
 });
 
-//PORT 10090
-//Get requests, token, damit nicht jede senden kann - uuid schauen ob statisch
-//start, enden, restart - kann argumente mitgeben
+
 
 // Create express app
 const app = express();
 const PORT = process.env.PORT || 10090;
 // app.use(express.bodyParser());
 
+// check uuid sent in authorization header (only allow commands from clients with our uuid)
+app.use(function(req, res, next) {
+    if(req.path === "/commands"){
+        if (!req.headers.authorization || req.headers.authorization !== uuid) {
+            console.log("Client not authorized!")
+          return res.status(403).json({ error: 'Not authorized!' });
+        }
+    }
+    next();
+  });
+  
+
 app.get("/", (req, res) => {
-    // res.send("Welcome to STAN's backend");
     res.sendFile(path.join(__dirname + "/backendInterface/index.html"));
 });
 
 app.get("/commands", (req, res) => {
-    // console.log(req.query.command)
-    // console.log("roundstart requested")
+    console.log("command received:" + req.query.command)
     const args = req.query.command.toLowerCase().split(" ");
     if(Commands[args[0]]) {
         Commands[args[0]](instance, args)

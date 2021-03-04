@@ -13,12 +13,19 @@
       font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
     }
 
-    p {
+    p,
+    input[type="text"] {
       font-size: 20px;
+    }
+
+    .uuid-input {
+      width: 75ch;
     }
 
     .btn {
       min-height: 50px;
+      min-width: 200px;
+      text-align: center;
       border-radius: 0;
       font-size: 30px;
       margin: auto 30px;
@@ -30,33 +37,117 @@
       color: #fff;
     }
 
+    .btn-warning {
+      background-color: red;
+    }
+
+    .btn-warning:hover {
+      color: red;
+    }
+
+    .btn-smaller {
+      min-height: 0;
+      min-width: 0;
+      font-size: 20px;
+    }
+
     .flex {
       display: flex;
-      /* width: 100vw; */
+    }
+
+    @media(max-width: 1100px) {
+      .uuid-input {
+        width: 80vw;
+      }
     }
   </style>
 </head>
 
 <body>
   <h1>Agar.io Backend Interface</h1>
+  <h2>UUID for access</h2>
+  <form class="js-uuid-form">
+    <input type="text" class="js-uuid-form-input uuid-input" name="uuid input" />
+    <input type="submit" value="Save" class="btn btn-smaller" />
+  </form>
+  <p class="js-current-uuid"></p>
+
   <h2>Commands</h2>
   <div class="flex">
-    <button class="btn js-roundstart-btn">Roundstart</button>
+    <button class="btn js-roundstart-btn">Round start</button>
     <p>Starts the game round</p>
   </div>
-
-
+  <div class="flex">
+    <button class="btn js-restart-btn">Restart</button>
+    <p>Restarts the server</p>
+  </div>
+  <div class="flex">
+    <button class="btn btn-warning js-exit-btn">Exit</button>
+    <p>EXITS THE SERVER</p>
+  </div>
 </body>
 
 <script>
-  // const fetch = require('node-fetch');
-  let roundStartBtn = document.querySelector(".js-roundstart-btn")
+  let uuid = ""
+  const uuidForm = document.querySelector('.js-uuid-form');
+  const uuidInput = document.querySelector('.js-uuid-form-input')
+  const uuidParagraph = document.querySelector(".js-current-uuid")
+
+  if (uuidForm.attachEvent) {
+    uuidForm.attachEvent("submit", processForm);
+  } else {
+    uuidForm.addEventListener("submit", processForm);
+  }
+
+  function processForm(e) {
+    if (e.preventDefault) e.preventDefault();
+    uuid = uuidInput.value;
+    uuidParagraph.textContent = "Current uuid: " + uuid
+
+  }
+
+
+  // ------- COMMANDS -------
+  // --- Round Start ---
+  const roundStartBtn = document.querySelector(".js-roundstart-btn")
+
   roundStartBtn.addEventListener("click", () => {
-    fetch("http://localhost:10090/commands?command=roundstart") //TODO Change for server
-      // .then(res => res.json())
-      // .then(json => console.log(json))
-      .catch(err => console.error("Can't fetch roundstart"))
+    executeCommand("roundstart").catch(err => {
+      console.log(err)
+    })
+    // executeCommand("roundstart").catch(err => console.error("Can't fetch roundstart command"))
   })
+
+  // --- Restart ---
+  const restartBtn = document.querySelector(".js-restart-btn")
+  restartBtn.addEventListener("click", () => {
+    executeCommand("restart").catch(err => console.error("Can't fetch restart command"))
+  })
+
+  // --- Exit ---
+  const exitBtn = document.querySelector(".js-exit-btn")
+  exitBtn.addEventListener("click", () => {
+    executeCommand("exit")
+  })
+
+  function executeCommand(command) {
+    return fetch("http://localhost:10090/commands?command=" + command, {
+      method: 'GET',
+      headers: {
+        'authorization': uuid,
+      }
+    }) //TODO Change for server
+      .then(res => {
+        console.log(res.status)
+        if (res.status === 403) {
+          alert("Need correct UUID to execute commands")
+        }
+      })
+    // .then(res => res.json())
+    // .then(json => { console.log(json) })
+    // .catch(err => console.error("Can't fetch roundstart command"))
+  }
+
 </script>
 
 </html>

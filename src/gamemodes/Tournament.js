@@ -1,6 +1,6 @@
 const Logger = require('../modules/Logger');
 const fetch = require('node-fetch');
-const fetch_secrets = require('../../fetch_secret.json')
+const fetch_secrets = require('../../secrets/fetch_secret.json')
 var Mode = require('./Mode');
 
 class Tournament extends Mode {

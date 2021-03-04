@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agar.io Backend Interface</title>
+
+  <style>
+    body {
+      background-color: #cca300;
+      font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
+
+    p {
+      font-size: 20px;
+    }
+
+    .btn {
+      min-height: 50px;
+      border-radius: 0;
+      font-size: 30px;
+      margin: auto 30px;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background-color: #000;
+      color: #fff;
+    }
+
+    .flex {
+      display: flex;
+      /* width: 100vw; */
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Agar.io Backend Interface</h1>
+  <h2>Commands</h2>
+  <div class="flex">
+    <button class="btn js-roundstart-btn">Roundstart</button>
+    <p>Starts the game round</p>
+  </div>
+
+
+</body>
+
+<script>
+  // const fetch = require('node-fetch');
+  let roundStartBtn = document.querySelector(".js-roundstart-btn")
+  roundStartBtn.addEventListener("click", () => {
+    fetch("http://localhost:10090/commands?command=roundstart") //TODO Change for server
+      // .then(res => res.json())
+      // .then(json => console.log(json))
+      .catch(err => console.error("Can't fetch roundstart"))
+  })
+</script>
+
+</html>

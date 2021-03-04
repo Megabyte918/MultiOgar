@@ -7,12 +7,15 @@
     "license": "Apache-2.0",
     "main": "src/index.js",
     "dependencies": {
+        "express": "^4.17.1",
         "node-fetch": "^2.6.1",
+        "path": "^0.12.7",
         "ws": "latest"
     },
     "devDependencies": {},
     "scripts": {
-        "start": "cd src && node index"
+        "start": "cd src && node index",
+        "startNodemon": "nodemon index.js"
     },
     "repository": {
         "type": "git",

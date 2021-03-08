@@ -84,6 +84,14 @@ class Server {
             this.startStatsServer(this.config.serverStatsPort);
         }
     }
+    pause() {
+        run = false;
+        this.mode.onPause();
+    }
+    resume() {
+        run = true;
+        this.mode.onResume();
+    }
     onHttpServerOpen() {
         // Start Main Loop
         setTimeout(this.timerLoopBind, 1);

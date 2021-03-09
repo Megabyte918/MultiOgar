@@ -78,6 +78,14 @@
     <p>Starts the game round</p>
   </div>
   <div class="flex">
+    <button class="btn js-pause-btn">Pause</button>
+    <p>Pauses the server</p>
+  </div>
+  <div class="flex">
+    <button class="btn js-resume-btn">Resume</button>
+    <p>Resumes the server</p>
+  </div>
+  <div class="flex">
     <button class="btn js-restart-btn">Restart</button>
     <p>Restarts the server</p>
   </div>
@@ -116,6 +124,18 @@
       console.log(err)
     })
     // executeCommand("roundstart").catch(err => console.error("Can't fetch roundstart command"))
+  })
+
+  // --- Pause ---
+  const pauseBtn = document.querySelector(".js-pause-btn")
+  pauseBtn.addEventListener("click", () => {
+    executeCommand("pause").catch(err => console.error("Can't fetch pause command"))
+  })
+
+  // --- Resume ---
+  const resumeBtn = document.querySelector(".js-resume-btn")
+  resumeBtn.addEventListener("click", () => {
+    executeCommand("resume").catch(err => console.error("Can't fetch resume command"))
   })
 
   // --- Restart ---

@@ -13,6 +13,12 @@ class Mode {
         // Called when the server starts
         server.run = true;
     }
+    onPause(){
+        //Called when the round is paused
+    }
+    onResume(){
+        //Called when the round is resumed
+    }
     onTick(server) {
         // Called on every game tick
     }

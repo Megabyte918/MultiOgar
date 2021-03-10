@@ -1,5 +1,6 @@
 const Logger = require('../modules/Logger');
 const fetch = require('node-fetch');
+
 const fetch_secrets = require('../../secrets/fetch_secret.json')
 var Mode = require('./Mode');
 
@@ -11,7 +12,6 @@ class Tournament extends Mode {
         this.specByLeaderboard = true;
         this.IsTournament = true;
         this.roundDuration = 3 * 60 * 1000; //TODO: Dynamisch über server command (backend interface)
-        //TODO: Spiel pausieren (run stoppen und game loop - mach gar nichts wenn pausiert)
         this.paused = false;
         this.lastPauseTime = null;
         this.accumulatedPauseTime = 0;
@@ -22,6 +22,7 @@ class Tournament extends Mode {
         // Called when the server starts
         server.run = false;
     }
+
 
     onPause() {
         if(this.paused) {

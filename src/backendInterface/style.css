@@ -25,6 +25,10 @@ label {
   display: none;
 }
 
+.disabled{
+  opacity: 0.4
+}
+
 .uuid-input {
   width: 75ch;
 }

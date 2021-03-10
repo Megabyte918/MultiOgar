@@ -10,6 +10,7 @@ const roundDurationInput = document.querySelector('.js-round-duration-form-input
 const currentRoundDurationParagraph = document.querySelector(".js-current-round-duration")
 const roundCountDownParagraph = document.querySelector(".js-round-countdown")
 let paused = false
+let roundStarted = false
 let pauseStartTime = 0
 let accumulatedPauseTime = 0
 
@@ -67,6 +68,8 @@ roundStartBtn.addEventListener("click", async () => {
   try {
     const resp = await executeCommandWithResp("roundstart")
     initiateCountdown(resp.duration, resp.timeElapsed)
+    roundStartBtn.disabled = true
+    roundStartBtn.classList.add("disabled")
   }
   catch (err) {
     alert("Cannot start round. " + err.message)
@@ -85,13 +88,12 @@ function initiateCountdown(duration, timeElapsed) {
     if(!paused){
       const newDuration = duration - globalTimeElapsed
       let currentTotalSecondsLeft = Math.floor((startTime + newDuration + accumulatedPauseTime - Date.now()) / 1000)
-      console.log("time left: " + globalTimeElapsed)
-      console.log(accumulatedPauseTime)
       if (currentTotalSecondsLeft <= 0) {
         roundCountDownParagraph.textContent = "Round countdown: 00:00"
         accumulatedPauseTime = 0
         globalTimeElapsed = 0
-        console.log("RESET")
+        roundStartBtn.disabled = false
+        roundStartBtn.classList.remove("disabled")
         clearInterval(updateInterval)
         clearInterval(countdownInterval)
         return
@@ -137,6 +139,8 @@ const pauseBtn = document.querySelector(".js-pause-btn")
 pauseBtn.addEventListener("click", () => {
   paused = true
   pauseStartTime = Date.now()
+  pauseBtn.disabled = true
+  pauseBtn.classList.add("disabled")
   executeCommand("pause").catch(err => console.error("Can't fetch pause command"))
 })
 
@@ -146,7 +150,8 @@ resumeBtn.addEventListener("click", () => {
   if(paused)
   accumulatedPauseTime += Date.now() - pauseStartTime
   paused = false
-
+  pauseBtn.disabled = false
+  pauseBtn.classList.remove("disabled")
   executeCommand("resume").catch(err => console.error("Can't fetch resume command"))
 })
 

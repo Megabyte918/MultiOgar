@@ -28,6 +28,7 @@
       min-width: 100vw;
       display: block;
       margin-bottom: 10px;
+      font-weight: 700;
     }
 
     .uuid-input {
@@ -56,6 +57,14 @@
     .btn-warning:hover {
       color: red;
     }
+
+    /* .btn-green {
+      background-color: lightgreen;
+    }
+
+    .btn-green:hover {
+      color: lightgreen;
+    } */
 
     .btn-smaller {
       min-height: 0;
@@ -88,7 +97,7 @@
   <h2>Round Controls:</h2>
   <section>
     <div class="flex">
-      <button class="btn js-roundstart-btn">Start round</button>
+      <button class="btn btn-green js-roundstart-btn">Start round</button>
       <p>Starts the game round</p>
     </div>
     <div class="flex">
@@ -131,18 +140,33 @@
   const uuidForm = document.querySelector('.js-uuid-form');
   const uuidInput = document.querySelector('.js-uuid-form-input')
   const uuidParagraph = document.querySelector(".js-current-uuid")
+  const roundDurationForm = document.querySelector('.js-round-duration-form');
+  const roundDurationInput = document.querySelector('.js-round-duration-form-input')
   const currentRoundDurationParagraph = document.querySelector(".js-current-round-duration")
 
   if (uuidForm.attachEvent) {
-    uuidForm.attachEvent("submit", processForm);
+    uuidForm.attachEvent("submit", processUuidForm);
   } else {
-    uuidForm.addEventListener("submit", processForm);
+    uuidForm.addEventListener("submit", processUuidForm);
   }
 
-  function processForm(e) {
+  function processUuidForm(e) {
     if (e.preventDefault) e.preventDefault();
     uuid = uuidInput.value;
     uuidParagraph.textContent = "Current uuid: " + uuid
+  }
+
+  if (roundDurationForm.attachEvent) {
+    roundDurationForm.attachEvent("submit", processRoundDurationForm);
+  } else {
+    roundDurationForm.addEventListener("submit", processRoundDurationForm);
+  }
+  async function processRoundDurationForm(e) {
+    if (e.preventDefault) e.preventDefault();
+    let currentDuration = roundDurationInput.value;
+    currentDuration = currentDuration * 1000 //in ms
+    const resp = await executeCommand("updateroundduration " + currentDuration)
+    currentRoundDurationParagraph.textContent = "Current round duration: " + (resp.duration / 1000) + " sec"
   }
 
   getCurrentRoundDuration(currentRoundDurationParagraph)
@@ -202,7 +226,7 @@
 
   function executeCommand(command) {
     return fetch("http://localhost:10090/commands?command=" + command, {
-      method: 'GET',
+      method: 'POST',
       headers: {
         'authorization': uuid,
       }
@@ -212,9 +236,12 @@
         if (res.status === 403) {
           alert("Need correct UUID to execute commands")
         }
+        else {
+          return res.json()
+        }
       })
-    // .then(res => res.json())
-    // .then(json => { console.log(json) })
+      // .then(res => res.json())
+      .then(json => { if (json) return json })
     // .catch(err => console.error("Can't fetch roundstart command"))
   }
 

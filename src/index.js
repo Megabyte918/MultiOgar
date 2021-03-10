@@ -8,6 +8,7 @@ const Logger = require("./modules/Logger.js");
 const express = require("express")
 const path = require("path");
 const {uuid} = require("./uuidForBackendInterface.json")
+const bodyParser = require('body-parser')
 
 // Create console interface.
 const inputInterface = ReadLine.createInterface(process.stdin, process.stdout);
@@ -33,11 +34,12 @@ inputInterface.on("line", (input) => {
 // Create express app
 const app = express();
 const PORT = process.env.PORT || 10090;
-// app.use(express.bodyParser());
+// app.use(bodyParser());
+app.use(bodyParser.json());
 
 // check uuid sent in authorization header (only allow commands from clients with our uuid)
 app.use(function(req, res, next) {
-    if(req.path === "/commands"){
+    if(req.path === "/commands" || req.path === "/updateRoundDuration"){
         if (!req.headers.authorization || req.headers.authorization !== uuid) {
             console.log("Client not authorized!")
           return res.status(403).json({ error: 'Not authorized!' });
@@ -51,34 +53,43 @@ app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname + "/backendInterface/index.html"));
 });
 
-app.get("/commands", (req, res) => {
+//todo change to post
+app.post("/commands", (req, res) => {
     console.log("command received:" + req.query.command)
     const args = req.query.command.toLowerCase().split(" ");
     if(Commands[args[0]]) {
         Commands[args[0]](instance, args)
     };
-    res.status(200).end()
+    switch(args[0]){
+      case "updateroundduration":
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify({ duration: instance.mode.roundDuration}));
+        break
+      default:
+        res.status(200).end()
+    }
 });
 
 app.get("/requests", (req, res) => {
-    console.log("Request received:" + req.query.request)
+    // console.log("Request received:" + req.query.request)
     const args = req.query.request.toLowerCase().split(" ");
-    console.log("here " )
-    console.log(args)
-    res.setHeader('Content-Type', 'application/json');
+    switch(args[0]){
+      case "roundduration":
+        res.setHeader('Content-Type', 'application/json');
         res.end(JSON.stringify({ duration: instance.mode.roundDuration}));
-    // switch(args[0]){
-    //   case "roundduration":
-    //     console.log("here1")
-    //     res.setHeader('Content-Type', 'application/json');
-    //     res.end(JSON.stringify({ duration: instance.mode.roundDuration}));
-    //     break;
-    //   default:
-    //     console.log("here2")
-    //     res.status(400).end()
-    //   }
+        break;
+      default:
+        res.status(400).end()
+      }
 
 });
+
+// app.post('/updateRoundDuration', function (req, res) {
+//   console.log(req.body)
+//   // res.send('POST request to the homepage')
+//   res.end(JSON.stringify({ duration: instance.mode.roundDuration}));
+// })
+
 
 app.listen({ port: PORT }, () =>
   console.log(

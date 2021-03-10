@@ -16,6 +16,7 @@ class Tournament extends Mode {
         this.lastPauseTime = null;
         this.accumulatedPauseTime = 0;
         this.roundStartTime = null;
+        this.roundStarted = false
     }
 
     onServerInit(server) {
@@ -77,10 +78,22 @@ class Tournament extends Mode {
         this.rankOne = lb[0];
     }
 
+    updateRoundDuration(duration){
+        // Called when round time length is to be changed
+        if(!this.roundStarted){
+            this.roundDuration = duration
+            console.log("new round duration: " + this.roundDuration)
+        }
+        else{
+            console.log("cannot update round duration until round has ended")
+        }
+    }
+
     roundStart(server) {
         Logger.info("Round started");
         server.run = true;
         this.roundStartTime = Date.now();
+        this.roundStarted = true
     }
 
     roundEnd(server) {
@@ -88,6 +101,7 @@ class Tournament extends Mode {
         server.run = false;
 
         this.sendScores(server);
+        this.roundStarted = false
     }
 
     sendScores(server) {

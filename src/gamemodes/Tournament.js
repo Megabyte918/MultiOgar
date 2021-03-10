@@ -1,6 +1,6 @@
 const Logger = require('../modules/Logger');
 const fetch = require('node-fetch');
-// const fetch_secrets = require('../../fetch_secret.json')
+const fetch_secrets = require('../../secrets/fetch_secret.json')
 var Mode = require('./Mode');
 
 class Tournament extends Mode {
@@ -10,17 +10,33 @@ class Tournament extends Mode {
         this.name = "Tournament";
         this.specByLeaderboard = true;
         this.IsTournament = true;
-
         this.roundDuration = 3 * 60 * 1000; //TODO: Dynamisch über server command (backend interface)
-
         //TODO: Spiel pausieren (run stoppen und game loop - mach gar nichts wenn pausiert)
-
+        this.paused = false;
+        this.lastPauseTime = null;
+        this.accumulatedPauseTime = 0;
         this.roundStartTime = null;
     }
 
     onServerInit(server) {
         // Called when the server starts
         server.run = false;
+    }
+
+    onPause() {
+        if(this.paused) {
+            return;
+        }
+        this.paused = true;
+        this.lastPauseTime = Date.now();
+    }
+
+    onResume() {
+        if(!this.paused) {
+            return;
+        }
+        this.paused = false;
+        this.accumulatedPauseTime += (Date.now() - this.lastPauseTime());
     }
 
     // Gamemode Specific Functions
@@ -30,10 +46,13 @@ class Tournament extends Mode {
         server.spawnPlayer(player, server.randomPos());
     }
     onTick(server) {
+        if(this.paused){
+            return;
+        }
         // Called on every game tick
         if(server.run && this.roundStartTime)
         {
-            var timePassed = Date.now() - this.roundStartTime;
+            var timePassed = Date.now() - (this.roundStartTime + this.accumulatedPauseTime);
             if(timePassed > this.roundDuration)
             {
                 this.roundEnd(server);

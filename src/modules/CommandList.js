@@ -211,6 +211,16 @@ class CommandsList {
         server.mode.roundStart(server);
     }
 
+    pause(server, args)
+    {
+        server.pause();
+    }
+
+    resume(server, args)
+    {
+        server.resume();
+    }
+
     stats(server, args) {
         Logger.info(`Connected players: ${server.clients.length} / ${server.config.serverMaxConnections}`);
         Logger.info(`Clients: ${server.clients.length}`);

@@ -31,6 +31,10 @@
       font-weight: 700;
     }
 
+    .hidden {
+      display: none;
+    }
+
     .uuid-input {
       width: 75ch;
     }
@@ -94,55 +98,64 @@
   </form>
   <p class="js-current-uuid"></p>
 
-  <h2>Round Controls:</h2>
-  <section>
-    <div class="flex">
-      <button class="btn btn-green js-roundstart-btn">Start round</button>
-      <p>Starts the game round</p>
-    </div>
-    <div class="flex">
-      <button class="btn js-pause-btn">Pause</button>
-      <p>Pauses the server</p>
-    </div>
-    <div class="flex">
-      <button class="btn js-resume-btn">Resume</button>
-      <p>Resumes the server</p>
-    </div>
-    <div class="flex">
-      <button class="btn js-restart-btn">Restart</button>
-      <p>Restarts the server</p>
-    </div>
-  </section>
+  <section class="hidden js-controls-section">
+    <h2>Round Controls:</h2>
+    <section>
+      <div class="flex">
+        <button class="btn btn-green js-roundstart-btn">Start round</button>
+        <p>Starts the game round</p>
+      </div>
+      <div class="flex">
+        <button class="btn js-pause-btn">Pause</button>
+        <p>Pauses the server</p>
+      </div>
+      <div class="flex">
+        <button class="btn js-resume-btn">Resume</button>
+        <p>Resumes the server</p>
+      </div>
+      <div class="flex">
+        <button class="btn js-restart-btn">Restart</button>
+        <p>Restarts the server</p>
+      </div>
+    </section>
 
-  <h2>Round Settings:</h2>
-  <section>
-    <form class="js-round-duration-form">
-      <label for="round-duration-input">Enter new round duration (in seconds):</label>
-      <input type="number" class="js-round-duration-form-input round-duration-input" name="round-duration input"
-        id="round-duration-input" />
-      <input type="submit" value="Save" class="btn btn-smaller" />
-    </form>
-    <p class="js-current-round-duration"></p>
-  </section>
+    <h2>Round Settings:</h2>
+    <section>
+      <form class="js-round-duration-form">
+        <label for="round-duration-input">Enter new round duration (in seconds):</label>
+        <input type="number" class="js-round-duration-form-input round-duration-input" name="round-duration input"
+          id="round-duration-input" />
+        <input type="submit" value="Save" class="btn btn-smaller" />
+      </form>
+      <p class="js-current-round-duration"></p>
+    </section>
 
 
-  <h2>Exit Commands:</h2>
-  <section>
-    <div class="flex">
-      <button class="btn btn-warning js-exit-btn">Exit</button>
-      <p>EXITS THE SERVER</p>
-    </div>
+    <h2>Exit Commands:</h2>
+    <section>
+      <div class="flex">
+        <button class="btn btn-warning js-exit-btn">Exit</button>
+        <p>EXITS THE SERVER</p>
+      </div>
+    </section>
   </section>
 </body>
 
 <script>
-  let uuid = ""
+  let uuid = localStorage.getItem("uuid") || ""
+  const controlsSection = document.querySelector('.js-controls-section');
   const uuidForm = document.querySelector('.js-uuid-form');
   const uuidInput = document.querySelector('.js-uuid-form-input')
   const uuidParagraph = document.querySelector(".js-current-uuid")
+  if (uuid) {
+    uuidParagraph.textContent = "Current uuid: " + uuid
+    controlsSection.classList.remove("hidden")
+  }
   const roundDurationForm = document.querySelector('.js-round-duration-form');
   const roundDurationInput = document.querySelector('.js-round-duration-form-input')
   const currentRoundDurationParagraph = document.querySelector(".js-current-round-duration")
+
+
 
   if (uuidForm.attachEvent) {
     uuidForm.attachEvent("submit", processUuidForm);
@@ -154,6 +167,8 @@
     if (e.preventDefault) e.preventDefault();
     uuid = uuidInput.value;
     uuidParagraph.textContent = "Current uuid: " + uuid
+    localStorage.setItem('uuid', uuid);
+    controlsSection.classList.remove("hidden")
   }
 
   if (roundDurationForm.attachEvent) {

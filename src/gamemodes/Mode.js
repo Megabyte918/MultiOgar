@@ -43,6 +43,9 @@ class Mode {
         // Called when the leaderboard update function is called
         server.leaderboardType = this.packetLB;
     }
+    // updateRoundTimeLength(timeLength){
+    //     // Called when round time length is to be changed
+    // }
 }
 
 module.exports = Mode;

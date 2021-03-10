@@ -10,7 +10,6 @@ const path = require("path");
 const {uuid} = require("./uuidForBackendInterface.json")
 
 
-
 // Create console interface.
 const inputInterface = ReadLine.createInterface(process.stdin, process.stdout);
 

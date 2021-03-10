@@ -63,7 +63,17 @@ app.post("/commands", (req, res) => {
     switch(args[0]){
       case "updateroundduration":
         res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify({ duration: instance.mode.roundDuration}));
+        if(instance.mode.roundStarted) {
+          // res.status(500).send("Cannot update round duration until round has ended.").end()
+          res.status(500).json(JSON.stringify({
+              error: "Cannot update round duration until round has ended."
+            }))
+            res.end()
+          }
+          else{
+          res.end(JSON.stringify({ duration: instance.mode.roundDuration}));
+
+        }
         break
       default:
         res.status(200).end()

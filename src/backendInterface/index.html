@@ -39,6 +39,22 @@
       width: 75ch;
     }
 
+    .start-round-container {
+      position: relative;
+    }
+
+    .countdown-container {
+      position: absolute;
+      left: 500px;
+      top: 0;
+      margin: 0;
+    }
+
+    .countdown {
+      margin: 0;
+      font-size: 50px;
+    }
+
     .btn {
       min-height: 50px;
       min-width: 200px;
@@ -80,6 +96,10 @@
       display: flex;
     }
 
+    .justify-content-space-between {
+      justify-content: space-between;
+    }
+
     @media(max-width: 1100px) {
       .uuid-input {
         width: 80vw;
@@ -101,9 +121,12 @@
   <section class="hidden js-controls-section">
     <h2>Round Controls:</h2>
     <section>
-      <div class="flex">
+      <div class="flex start-round-container">
         <button class="btn btn-green js-roundstart-btn">Start round</button>
         <p>Starts the game round</p>
+        <div class="countdown-container">
+          <p class="js-round-countdown countdown"></p>
+        </div>
       </div>
       <div class="flex">
         <button class="btn js-pause-btn">Pause</button>
@@ -127,7 +150,7 @@
           id="round-duration-input" />
         <input type="submit" value="Save" class="btn btn-smaller" />
       </form>
-      <p class="js-current-round-duration"></p>
+      <p class="js-current-round-duration current-countdown"></p>
     </section>
 
 
@@ -154,6 +177,7 @@
   const roundDurationForm = document.querySelector('.js-round-duration-form');
   const roundDurationInput = document.querySelector('.js-round-duration-form-input')
   const currentRoundDurationParagraph = document.querySelector(".js-current-round-duration")
+  const roundCountDownParagraph = document.querySelector(".js-round-countdown")
 
 
 
@@ -197,17 +221,68 @@
   // ------- COMMANDS -------
   // --- Round Start ---
   const roundStartBtn = document.querySelector(".js-roundstart-btn")
+  let countdownInterval = null
+  let updateInterval = null
 
-  roundStartBtn.addEventListener("click", () => {
-    executeCommand("roundstart").catch(err => {
-      alert("Cannot start round.")
-    })
+  roundStartBtn.addEventListener("click", async () => {
+    try {
+      const resp = await executeCommandWithResp("roundstart")
+      console.log(resp)
+      initiateCountdown(resp.duration, resp.timeElapsed)
+    }
+    catch (err) {
+      alert("Cannot start round. " + err.message)
+    }
     // executeCommand("roundstart").catch(err => console.error("Cannot start round."))
+
   })
+
+
+  let globalTimeElapsed = 0
+
+
+  function initiateCountdown(duration, timeElapsed) {
+    let startTime = Date.now()
+    // let startTime = Date.now() + timeElapsed
+    globalTimeElapsed = timeElapsed
+    clearInterval(countdownInterval)
+    countdownInterval = setInterval(() => {
+      duration = duration - globalTimeElapsed
+      let currentTotalSecondsLeft = Math.floor((startTime + duration - Date.now()) / 1000)
+      if (currentTotalSecondsLeft <= 0) {
+        roundCountDownParagraph.textContent = "00:00"
+        clearInterval(updateInterval)
+        return
+      }
+      let minutes = Math.floor(currentTotalSecondsLeft / 60)
+      let seconds = currentTotalSecondsLeft - minutes * 60
+      roundCountDownParagraph.textContent = minutes + ":" + seconds
+    }, 1000)
+
+    //todo stop when over
+    updateInterval = setInterval(() => {
+      console.log("hi")
+      updateRoundCountDown()
+    }, 5000)
+  }
+
+
+
+  async function updateRoundCountDown() {
+    console.log("updating")
+    let resp = await executeRequest("countdowntime")
+    let startTime = Date.now()
+    let duration = resp.duration - resp.timeElapsed
+    // initiateCountdown(resp.duration, resp.timeElapsed)
+    // currentTotalSecondsLeft = Math.floor((startTime + duration - Date.now()) / 1000 - 0.2)
+    timeElapsed = resp.timeElapsed
+
+  }
 
   // --- Pause ---
   const pauseBtn = document.querySelector(".js-pause-btn")
   pauseBtn.addEventListener("click", () => {
+
     executeCommand("pause").catch(err => console.error("Can't fetch pause command"))
   })
 

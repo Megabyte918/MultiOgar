@@ -61,10 +61,14 @@ app.post("/commands", (req, res) => {
         Commands[args[0]](instance, args)
     };
     switch(args[0]){
+      case "roundstart":
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify({ roundStartTime: instance.mode.roundStartTime, duration: instance.mode.roundDuration, timeElapsed: Date.now() - instance.mode.roundStartTime}));
+        break 
+
       case "updateroundduration":
         res.setHeader('Content-Type', 'application/json');
         if(instance.mode.roundStarted) {
-          // res.status(500).send("Cannot update round duration until round has ended.").end()
           res.status(500).end(JSON.stringify({
             error: "Cannot update round duration until round has ended."
           }))
@@ -87,6 +91,11 @@ app.get("/requests", (req, res) => {
         res.setHeader('Content-Type', 'application/json');
         res.end(JSON.stringify({ duration: instance.mode.roundDuration}));
         break;
+      case "countdowntime":
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify({ roundStartTime: instance.mode.roundStartTime, duration: instance.mode.roundDuration, timeElapsed: Date.now() - instance.mode.roundStartTime}));
+        break
+
       default:
         res.status(400).end()
       }

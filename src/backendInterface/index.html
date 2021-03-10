@@ -166,7 +166,7 @@
     let currentDuration = roundDurationInput.value;
     currentDuration = currentDuration * 1000 //in ms
     try {
-      const resp = await executeCommand("updateroundduration " + currentDuration)
+      const resp = await executeCommandWithResp("updateroundduration " + currentDuration)
       currentRoundDurationParagraph.textContent = "Current round duration: " + (resp.duration / 1000) + " sec"
 
     }
@@ -185,9 +185,9 @@
 
   roundStartBtn.addEventListener("click", () => {
     executeCommand("roundstart").catch(err => {
-      console.log(err)
+      alert("Cannot start round.")
     })
-    executeCommand("roundstart").catch(err => console.error("Cannot start round."))
+    // executeCommand("roundstart").catch(err => console.error("Cannot start round."))
   })
 
   // --- Pause ---
@@ -221,13 +221,7 @@
 
 
   async function getCurrentRoundDuration(currentRoundDurationParagraph) {
-    // console.log("hey")
-    // try {
     let currentDuration = await executeRequest("roundduration")
-    // }
-    // catch (e) {
-    //   alert(e.message)
-    // }
     currentDuration = (currentDuration.duration / 1000)
     currentRoundDurationParagraph.textContent = "Current round duration: " + currentDuration + " sec"
   }
@@ -244,31 +238,34 @@
       }
     }) //TODO Change for server
       .then(res => {
-        console.log(res.status)
         if (res.status === 403) {
           alert("Need correct UUID to execute commands")
         }
-        // else if (res.status === 500) {
-        //   console.log(res.json)
-        //   throw new Error()
-        //   return res.json()
-        // }
+        else {
+          return res
+        }
+
+      })
+  }
+
+  function executeCommandWithResp(command) {
+    return executeCommand(command)
+      .then(res => {
+        if (res.status === 403) {
+          alert("Need correct UUID to execute commands")
+        }
         else {
           return res.json()
         }
       })
-      // .then(res => res.json())
       .then(json => {
-        json = JSON.parse(json)
-
         if (json.hasOwnProperty("error")) {
-          console.log("yaas")
           throw new Error(json.error)
         }
         else if (json) return json
       })
     // .catch(err => {
-    //   throw err
+    //   console.error(err)
     // })
   }
 
@@ -283,13 +280,9 @@
       }
     })
       .then(res => {
-        console.log("ok")
-        console.log(res)
         return res.json()
       })
       .then(json => {
-        console.log("here")
-        console.log(json)
         return json
       })
       .catch(err => console.error(urlCommand + " failed"))

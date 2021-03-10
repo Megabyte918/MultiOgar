@@ -48,10 +48,19 @@ app.use(function(req, res, next) {
     next();
   });
   
+  // app.use(express.static(path.join(__dirname,"/backendInterface")))
+  app.get("/", (req, res) => {
+  // app.use('/', express.static('backendInterface'));
+  // app.use(express.static(__dirname + "/backendInterface"));
+  res.sendFile(path.join(__dirname + "/backendInterface/index.html"));
+  app.use(express.static("backendInterface"));
 
-app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname + "/backendInterface/index.html"));
 });
+
+// app.get("*", (req, res) => {
+//   res.sendFile(path.resolve(__dirname, "backendInterface", "index.html"));
+// });
+
 
 //todo change to post
 app.post("/commands", (req, res) => {
@@ -63,7 +72,8 @@ app.post("/commands", (req, res) => {
     switch(args[0]){
       case "roundstart":
         res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify({ roundStartTime: instance.mode.roundStartTime, duration: instance.mode.roundDuration, timeElapsed: Date.now() - instance.mode.roundStartTime}));
+        res.end(JSON.stringify({ roundStartTime: instance.mode.roundStartTime, duration: instance.mode.roundDuration, timeElapsed: Date.now() - (instance.mode.roundStartTime + instance.mode.accumulatedPauseTime)}));
+        // res.end(JSON.stringify({ roundStartTime: instance.mode.roundStartTime, duration: instance.mode.roundDuration, timeElapsed: Date.now() - instance.mode.roundStartTime}));
         break 
 
       case "updateroundduration":
@@ -93,7 +103,8 @@ app.get("/requests", (req, res) => {
         break;
       case "countdowntime":
         res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify({ roundStartTime: instance.mode.roundStartTime, duration: instance.mode.roundDuration, timeElapsed: Date.now() - instance.mode.roundStartTime}));
+        res.end(JSON.stringify({ roundStartTime: instance.mode.roundStartTime, duration: instance.mode.roundDuration, timeElapsed: Date.now() - (instance.mode.roundStartTime + instance.mode.accumulatedPauseTime)}));
+        // res.end(JSON.stringify({ roundStartTime: instance.mode.roundStartTime, duration: instance.mode.roundDuration, timeElapsed: Date.now() - instance.mode.roundStartTime}));
         break
 
       default:

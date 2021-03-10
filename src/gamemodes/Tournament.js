@@ -37,7 +37,7 @@ class Tournament extends Mode {
             return;
         }
         this.paused = false;
-        this.accumulatedPauseTime += (Date.now() - this.lastPauseTime());
+        this.accumulatedPauseTime += (Date.now() - this.lastPauseTime);
     }
 
     // Gamemode Specific Functions
@@ -93,6 +93,7 @@ class Tournament extends Mode {
         server.run = true;
         this.roundStartTime = Date.now();
         this.roundStarted = true
+        this.accumulatedPauseTime = 0
     }
 
     roundEnd(server) {

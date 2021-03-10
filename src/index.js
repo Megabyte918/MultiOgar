@@ -9,13 +9,13 @@ const express = require("express")
 const path = require("path");
 const {uuid} = require("./uuidForBackendInterface.json")
 
-
 // Create console interface.
 const inputInterface = ReadLine.createInterface(process.stdin, process.stdout);
 
 // Create and start instance of server.
 const instance = new Server();
 instance.start();
+
 
 // Welcome message.
 Logger.info(`Running MultiOgarII ${instance.version}, a FOSS agar.io server implementation.`);
@@ -58,6 +58,26 @@ app.get("/commands", (req, res) => {
         Commands[args[0]](instance, args)
     };
     res.status(200).end()
+});
+
+app.get("/requests", (req, res) => {
+    console.log("Request received:" + req.query.request)
+    const args = req.query.request.toLowerCase().split(" ");
+    console.log("here " )
+    console.log(args)
+    res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify({ duration: instance.mode.roundDuration}));
+    // switch(args[0]){
+    //   case "roundduration":
+    //     console.log("here1")
+    //     res.setHeader('Content-Type', 'application/json');
+    //     res.end(JSON.stringify({ duration: instance.mode.roundDuration}));
+    //     break;
+    //   default:
+    //     console.log("here2")
+    //     res.status(400).end()
+    //   }
+
 });
 
 app.listen({ port: PORT }, () =>

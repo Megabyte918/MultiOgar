@@ -13,9 +13,21 @@
       font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
     }
 
+    h2 {
+      margin-top: 50px;
+    }
+
     p,
-    input[type="text"] {
+    input[type="text"],
+    input[type="number"],
+    label {
       font-size: 20px;
+    }
+
+    label {
+      min-width: 100vw;
+      display: block;
+      margin-bottom: 10px;
     }
 
     .uuid-input {
@@ -67,32 +79,51 @@
   <h1>Agar.io Backend Interface</h1>
   <h2>UUID for access</h2>
   <form class="js-uuid-form">
-    <input type="text" class="js-uuid-form-input uuid-input" name="uuid input" />
+    <label for="uuid-input">Enter UUID:</label>
+    <input type="text" class="js-uuid-form-input uuid-input" name="uuid input" id="uuid-input" />
     <input type="submit" value="Save" class="btn btn-smaller" />
   </form>
   <p class="js-current-uuid"></p>
 
-  <h2>Commands</h2>
-  <div class="flex">
-    <button class="btn js-roundstart-btn">Round start</button>
-    <p>Starts the game round</p>
-  </div>
-  <div class="flex">
-    <button class="btn js-pause-btn">Pause</button>
-    <p>Pauses the server</p>
-  </div>
-  <div class="flex">
-    <button class="btn js-resume-btn">Resume</button>
-    <p>Resumes the server</p>
-  </div>
-  <div class="flex">
-    <button class="btn js-restart-btn">Restart</button>
-    <p>Restarts the server</p>
-  </div>
-  <div class="flex">
-    <button class="btn btn-warning js-exit-btn">Exit</button>
-    <p>EXITS THE SERVER</p>
-  </div>
+  <h2>Round Controls:</h2>
+  <section>
+    <div class="flex">
+      <button class="btn js-roundstart-btn">Start round</button>
+      <p>Starts the game round</p>
+    </div>
+    <div class="flex">
+      <button class="btn js-pause-btn">Pause</button>
+      <p>Pauses the server</p>
+    </div>
+    <div class="flex">
+      <button class="btn js-resume-btn">Resume</button>
+      <p>Resumes the server</p>
+    </div>
+    <div class="flex">
+      <button class="btn js-restart-btn">Restart</button>
+      <p>Restarts the server</p>
+    </div>
+  </section>
+
+  <h2>Round Settings:</h2>
+  <section>
+    <form class="js-round-duration-form">
+      <label for="round-duration-input">Enter new round duration (in seconds):</label>
+      <input type="number" class="js-round-duration-form-input round-duration-input" name="round-duration input"
+        id="round-duration-input" />
+      <input type="submit" value="Save" class="btn btn-smaller" />
+    </form>
+    <p class="js-current-round-duration"></p>
+  </section>
+
+
+  <h2>Exit Commands:</h2>
+  <section>
+    <div class="flex">
+      <button class="btn btn-warning js-exit-btn">Exit</button>
+      <p>EXITS THE SERVER</p>
+    </div>
+  </section>
 </body>
 
 <script>
@@ -100,6 +131,7 @@
   const uuidForm = document.querySelector('.js-uuid-form');
   const uuidInput = document.querySelector('.js-uuid-form-input')
   const uuidParagraph = document.querySelector(".js-current-uuid")
+  const currentRoundDurationParagraph = document.querySelector(".js-current-round-duration")
 
   if (uuidForm.attachEvent) {
     uuidForm.attachEvent("submit", processForm);
@@ -111,8 +143,9 @@
     if (e.preventDefault) e.preventDefault();
     uuid = uuidInput.value;
     uuidParagraph.textContent = "Current uuid: " + uuid
-
   }
+
+  getCurrentRoundDuration(currentRoundDurationParagraph)
 
 
   // ------- COMMANDS -------
@@ -144,11 +177,28 @@
     executeCommand("restart").catch(err => console.error("Can't fetch restart command"))
   })
 
+  // --- Update round duration ---
+  const updateRoundDuration = document.querySelector(".js-round-duration-btn")
+  // updateRoundDuration.addEventListener("click", () => {
+  //   executeCommand("round-duration", false)
+  // })
   // --- Exit ---
   const exitBtn = document.querySelector(".js-exit-btn")
   exitBtn.addEventListener("click", () => {
     executeCommand("exit")
   })
+
+
+  async function getCurrentRoundDuration(currentRoundDurationParagraph) {
+    console.log("hey")
+    let currentDuration = await executeRequest("roundduration")
+    currentDuration = (currentDuration.duration / 1000)
+    currentRoundDurationParagraph.textContent = "Current round duration: " + currentDuration + " sec"
+  }
+
+
+
+
 
   function executeCommand(command) {
     return fetch("http://localhost:10090/commands?command=" + command, {
@@ -166,6 +216,29 @@
     // .then(res => res.json())
     // .then(json => { console.log(json) })
     // .catch(err => console.error("Can't fetch roundstart command"))
+  }
+
+
+
+
+  function executeRequest(request) {
+    return fetch("http://localhost:10090/requests?request=" + request, {
+      method: 'GET',
+      headers: {
+        //'authorization': uuid,
+      }
+    })
+      .then(res => {
+        console.log("ok")
+        console.log(res)
+        return res.json()
+      })
+      .then(json => {
+        console.log("here")
+        console.log(json)
+        return json
+      })
+      .catch(err => console.error(urlCommand + " failed"))
   }
 
 </script>

@@ -1,7 +1,7 @@
 
 //TODO Change for server
-const HOST = "http://localhost:10090/"
-//const HOST = "http://agar.ludecat.io:10090/"
+// const HOST = "http://localhost:10090/"
+const HOST = "http://agar.ludecat.io:10090/"
 let uuid = localStorage.getItem("uuid") || ""
 const controlsSection = document.querySelector('.js-controls-section');
 const uuidForm = document.querySelector('.js-uuid-form');

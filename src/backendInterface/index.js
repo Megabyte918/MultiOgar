@@ -1,3 +1,5 @@
+
+//TODO Change for server
 const HOST = "http://localhost:10090/"
 //const HOST = "http://agar.ludecat.io:10090/"
 let uuid = localStorage.getItem("uuid") || ""
@@ -47,6 +49,7 @@ async function processRoundDurationForm(e) {
   currentDuration = currentDuration * 1000 //in ms
   try {
     const resp = await executeCommandWithResp("updateroundduration " + currentDuration)
+    if(resp)
     currentRoundDurationParagraph.textContent = "Current round duration: " + (resp.duration / 1000) + " sec"
 
   }
@@ -67,9 +70,12 @@ let updateInterval = null
 roundStartBtn.addEventListener("click", async () => {
   try {
     const resp = await executeCommandWithResp("roundstart")
-    initiateCountdown(resp.duration, resp.timeElapsed)
-    roundStartBtn.disabled = true
-    roundStartBtn.classList.add("disabled")
+    if(resp)
+    {
+      initiateCountdown(resp.duration, resp.timeElapsed)
+      roundStartBtn.disabled = true
+      roundStartBtn.classList.add("disabled")
+    }
   }
   catch (err) {
     alert("Cannot start round. " + err.message)
@@ -129,8 +135,11 @@ async function updateRoundCountDown() {
 
 async function getCurrentRoundDuration(currentRoundDurationParagraph) {
   let currentDuration = await executeRequest("roundduration")
-  currentDuration = (currentDuration.duration / 1000)
+  if(currentDuration)
+  {
+    currentDuration = (currentDuration.duration / 1000)
   currentRoundDurationParagraph.textContent = "Current round duration: " + currentDuration + " sec"
+}
 }
 
 
@@ -181,13 +190,16 @@ function executeCommand(command) {
     headers: {
       'authorization': uuid,
     }
-  }) //TODO Change for server
+  }) 
     .then(res => {
-      if (res.status === 403) {
-        alert("Need correct UUID to execute commands")
-      }
-      else {
-        return res
+      if(res){
+        if (res.status === 403) {
+          alert("Need correct UUID to execute commands")
+        }
+        else {
+          return res
+        }
+
       }
 
     })
@@ -196,18 +208,24 @@ function executeCommand(command) {
 function executeCommandWithResp(command) {
   return executeCommand(command)
     .then(res => {
-      if (res.status === 403) {
-        alert("Need correct UUID to execute commands")
-      }
-      else {
-        return res.json()
+      if(res){
+        if (res.status === 403) {
+          alert("Need correct UUID to execute commands")
+        }
+        else {
+          return res.json()
+        }
+
       }
     })
     .then(json => {
-      if (json.hasOwnProperty("error")) {
-        throw new Error(json.error)
+      if(json){
+        if (json.hasOwnProperty("error")) {
+          throw new Error(json.error)
+        }
+        else  return json
+
       }
-      else if (json) return json
     })
   // .catch(err => {
   //   console.error(err)

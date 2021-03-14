@@ -16,6 +16,7 @@ class Tournament extends Mode {
         this.lastPauseTime = null;
         this.accumulatedPauseTime = 0;
         this.roundStartTime = null;
+        this.roundStarted = false;
     }
 
     onServerInit(server) {
@@ -53,6 +54,17 @@ class Tournament extends Mode {
         if(server.run && this.roundStartTime)
         {
             var timePassed = Date.now() - (this.roundStartTime + this.accumulatedPauseTime);
+            var timeLeft = this.roundDuration - timePassed;
+
+            for (var i = 0, len = server.clients.length; i < len; i++) {
+                if (!server.clients[i]){
+                    continue;
+                }
+                var Packet = require('../packet');
+                //TODO: Optimize if needed (Only send every second)
+                server.clients[i].packetHandler.sendPacket(new Packet.UpdateTimer(timeLeft/1000));
+            }
+
             if(timePassed > this.roundDuration)
             {
                 this.roundEnd(server);

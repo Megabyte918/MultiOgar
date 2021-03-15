@@ -206,6 +206,11 @@ class CommandsList {
         return process.exit(exitCode);
     };
 
+    updateroundduration(server, args)
+    {
+        server.mode.updateRoundDuration(args[1]);
+    }
+
     roundstart(server, args)
     {
         server.mode.roundStart(server);

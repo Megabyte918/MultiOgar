@@ -85,11 +85,11 @@ class Server {
         }
     }
     pause() {
-        run = false;
+        this.run = false;
         this.mode.onPause();
     }
     resume() {
-        run = true;
+        this.run = true;
         this.mode.onResume();
     }
     onHttpServerOpen() {

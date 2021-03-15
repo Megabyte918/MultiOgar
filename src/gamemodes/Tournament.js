@@ -1,6 +1,6 @@
 const Logger = require('../modules/Logger');
 const fetch = require('node-fetch');
-const fetch_secrets = require('../../secrets/fetch_secret.json')
+const fetch_secrets = require('../../fetch_secret.json')
 var Mode = require('./Mode');
 
 class Tournament extends Mode {
@@ -11,7 +11,6 @@ class Tournament extends Mode {
         this.specByLeaderboard = true;
         this.IsTournament = true;
         this.roundDuration = 3 * 60 * 1000; //TODO: Dynamisch über server command (backend interface)
-        //TODO: Spiel pausieren (run stoppen und game loop - mach gar nichts wenn pausiert)
         this.paused = false;
         this.lastPauseTime = null;
         this.accumulatedPauseTime = 0;
@@ -23,6 +22,7 @@ class Tournament extends Mode {
         // Called when the server starts
         server.run = false;
     }
+
 
     onPause() {
         if(this.paused) {
@@ -37,7 +37,7 @@ class Tournament extends Mode {
             return;
         }
         this.paused = false;
-        this.accumulatedPauseTime += (Date.now() - this.lastPauseTime());
+        this.accumulatedPauseTime += (Date.now() - this.lastPauseTime);
     }
 
     // Gamemode Specific Functions
@@ -88,10 +88,23 @@ class Tournament extends Mode {
         this.rankOne = lb[0];
     }
 
+    updateRoundDuration(duration){
+        // Called when round time length is to be changed
+        if(!this.roundStarted){
+            this.roundDuration = duration
+            console.log("new round duration: " + this.roundDuration)
+        }
+        else{
+            console.log("cannot update round duration until round has ended")
+        }
+    }
+
     roundStart(server) {
         Logger.info("Round started");
         server.run = true;
         this.roundStartTime = Date.now();
+        this.roundStarted = true
+        this.accumulatedPauseTime = 0
     }
 
     roundEnd(server) {
@@ -99,6 +112,7 @@ class Tournament extends Mode {
         server.run = false;
 
         this.sendScores(server);
+        this.roundStarted = false
     }
 
     sendScores(server) {
@@ -118,17 +132,17 @@ class Tournament extends Mode {
             })
         }
 
-        fetch(fetch_secrets.sheetUrl, {
-            method: 'POST',
-            headers: {
-                Authorization: fetch_secrets.bearer,
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                game: 'Agario',
-                result: results
-            })
-        })
+        // fetch(fetch_secrets.sheetUrl, {
+        //     method: 'POST',
+        //     headers: {
+        //         Authorization: fetch_secrets.bearer,
+        //         'Content-Type': 'application/json',
+        //     },
+        //     body: JSON.stringify({
+        //         game: 'Agario',
+        //         result: results
+        //     })
+        // })
     }
 }
 

@@ -170,6 +170,10 @@ const commands = [
         Logger.warn(player.socket.remoteAddress + ` ADDED ${count} BOTS`);
         send(player, `Added ${count} Bots`);
     }),
+    new Command("updateroundduration", "Updates round duration", "", UserRoleEnum.ADMIN, (player, args) => {
+        console.log(args)
+        player.server.mode.updateRoundDuration(player.server, args.duration);
+    }),
     new Command("roundstart", "Starts the game round", "", UserRoleEnum.ADMIN, (player, args) => {
         player.server.mode.roundStart(player.server);
     }),

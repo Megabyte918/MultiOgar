@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agar.io Backend Interface</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+
+  </style>
+</head>
+
+<body>
+  <h1>Agar.io Backend Interface</h1>
+  <h2>UUID for access</h2>
+  <form class="js-uuid-form">
+    <label for="uuid-input">Enter UUID:</label>
+    <input type="text" class="js-uuid-form-input uuid-input" name="uuid input" id="uuid-input" />
+    <input type="submit" value="Save" class="btn btn-smaller" />
+  </form>
+  <p class="js-current-uuid"></p>
+
+  <section class="hidden js-controls-section">
+    <h2>Round Controls:</h2>
+    <section>
+      <div class="flex start-round-container justify-content-space-between">
+        <div class="flex">
+          <button class="btn btn-green js-roundstart-btn">Start round</button>
+          <p>Starts the game round</p>
+        </div>
+        <div class="countdown-container">
+          <p class="js-round-countdown countdown"></p>
+        </div>
+      </div>
+      <div class="flex">
+        <button class="btn js-pause-btn">Pause</button>
+        <p>Pauses the server</p>
+      </div>
+      <div class="flex">
+        <button class="btn js-resume-btn">Resume</button>
+        <p>Resumes the server</p>
+      </div>
+      <div class="flex">
+        <button class="btn js-restart-btn">Restart</button>
+        <p>Restarts the server</p>
+      </div>
+    </section>
+
+    <h2>Round Settings:</h2>
+    <section>
+      <form class="js-round-duration-form">
+        <label for="round-duration-input">Enter new round duration (in seconds):</label>
+        <input type="number" class="js-round-duration-form-input round-duration-input" name="round-duration input"
+          id="round-duration-input" />
+        <input type="submit" value="Save" class="btn btn-smaller" />
+      </form>
+      <p class="js-current-round-duration current-countdown"></p>
+    </section>
+
+
+    <h2>Exit Commands:</h2>
+    <section>
+      <div class="flex">
+        <button class="btn btn-warning js-exit-btn">Exit</button>
+        <p>EXITS THE SERVER</p>
+      </div>
+    </section>
+  </section>
+</body>
+
+<script src="./index.js"></script>
+
+</html>

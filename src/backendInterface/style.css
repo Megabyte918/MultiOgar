@@ -1,0 +1,108 @@
+body {
+  background-color: #cca300;
+  font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+h2 {
+  margin-top: 50px;
+}
+
+p,
+input[type="text"],
+input[type="number"],
+label {
+  font-size: 20px;
+}
+
+label {
+  min-width: 100vw;
+  display: block;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+.hidden {
+  display: none;
+}
+
+.disabled{
+  opacity: 0.4
+}
+
+.uuid-input {
+  width: 75ch;
+}
+
+.start-round-container {
+  position: relative;
+}
+
+.countdown {
+  margin: 0;
+  font-size: 50px;
+}
+
+.btn {
+  min-height: 50px;
+  min-width: 200px;
+  text-align: center;
+  border-radius: 0;
+  font-size: 30px;
+  margin: auto 30px;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background-color: #000;
+  color: #fff;
+}
+
+.btn-warning {
+  background-color: red;
+}
+
+.btn-warning:hover {
+  color: red;
+}
+
+/* .btn-green {
+  background-color: lightgreen;
+}
+
+.btn-green:hover {
+  color: lightgreen;
+} */
+
+.btn-smaller {
+  min-height: 0;
+  min-width: 0;
+  font-size: 20px;
+}
+
+.flex {
+  display: flex;
+}
+
+.justify-content-space-between {
+  justify-content: space-between;
+}
+
+@media(max-width: 1100px) {
+  .uuid-input {
+    width: 80vw;
+  }
+  .countdown {
+    margin-top: 10px;
+    font-size: 30px;
+  }
+}
+
+@media(max-width: 767px) {
+  .start-round-container{
+    display: initial;
+  }
+  .countdown {
+    margin-left: 30px;
+    margin-bottom: 10px;
+  }
+}

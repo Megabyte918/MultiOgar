@@ -31,6 +31,7 @@ class PlayerTracker {
         this.spectate = false;
         this.freeRoam = false; // Free-roam mode enables player to move in spectate mode
         this.spectateTarget = null; // Spectate target, null for largest player
+        this.spectateTargetIndex = 0;
         this.lastKeypressTick = 0;
         this.centerPos = new Vec2(0, 0);
         this.mouse = new Vec2(0, 0);
@@ -328,12 +329,12 @@ class PlayerTracker {
     pressSpace() {
         if (this.spectate) {
             // Check for spam first (to prevent too many add/del updates)
-            if (this.server.ticks - this.lastKeypressTick < 40)
+            if (this.server.ticks - this.lastKeypressTick < 5){
                 return;
+            }
             this.lastKeypressTick = this.server.ticks;
-            // Space doesn't work for freeRoam mode
-            if (this.freeRoam || this.server.largestClient == null)
-                return;
+            this.freeRoam = !this.freeRoam;
+            this.spectateTarget = null;
         }
         else if (this.server.run) {
             // Disable mergeOverride on the last merging cell
@@ -353,13 +354,31 @@ class PlayerTracker {
     pressQ() {
         if (this.spectate) {
             // Check for spam first (to prevent too many add/del updates)
-            if (this.server.ticks - this.lastKeypressTick < 40){
+            if (this.server.ticks - this.lastKeypressTick < 5)
                 return;
-            }
             this.lastKeypressTick = this.server.ticks;
-            if (this.spectateTarget == null)
-                this.freeRoam = !this.freeRoam;
-            this.spectateTarget = null;
+            // Space doesn't work for freeRoam mode
+            if (this.freeRoam || this.server.largestClient == null)
+                return;
+
+            var nextSpectateTargetIndex = 0;
+            var currentSpectateTargetIndex = 0;
+            var i;
+            //Find current spectate target index in client array
+            for(i = 0; i < this.server.clients.length; i++){
+                if(this.server.clients[i].playerTracker === this.spectateTarget){
+                    currentSpectateTargetIndex = i;
+                    break;
+                }
+            }
+            //Find next valid spectate target that is not a spectator
+            for (i = currentSpectateTargetIndex + 1; i < this.server.clients.length; i++) {
+                if(this.server.clients[i].playerTracker.spectate === false){
+                    nextSpectateTargetIndex = i;
+                    break;
+                }
+            }
+            this.spectateTarget = this.server.clients[nextSpectateTargetIndex].playerTracker;
         }
     }
     getSpecTarget() {

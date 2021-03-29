@@ -302,7 +302,7 @@ class PlayerTracker {
                 var mouseVec = this.mouse.difference(this.centerPos);
                 var mouseDist = mouseVec.dist();
                 if (mouseDist != 0) {
-                    this.setCenterPos(this.centerPos.add(mouseVec.product(32 / mouseDist)));
+                    this.setCenterPos(this.centerPos.add(mouseVec.product(128 / mouseDist)));
                 }
                 var scale = this.server.config.serverSpectatorScale;
             }

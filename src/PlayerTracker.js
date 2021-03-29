@@ -349,8 +349,9 @@ class PlayerTracker {
     pressQ() {
         if (this.spectate) {
             // Check for spam first (to prevent too many add/del updates)
-            if (this.server.ticks - this.lastKeypressTick < 40)
+            if (this.server.ticks - this.lastKeypressTick < 40){
                 return;
+            }
             this.lastKeypressTick = this.server.ticks;
             if (this.spectateTarget == null)
                 this.freeRoam = !this.freeRoam;

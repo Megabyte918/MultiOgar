@@ -180,7 +180,7 @@ module.exports = Object.seal({
 "minionMaxStartSize": 31.6227766017,
 "minionCollideTeam": 0,
 "disableERTP": 1,
-"disableQ": 0,
+"disableQ": 1,
 "serverMinions": 0,
 "defaultName": "minion",
 "minionsOnLeaderboard": 0,

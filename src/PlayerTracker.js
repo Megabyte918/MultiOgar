@@ -196,6 +196,10 @@ class PlayerTracker {
         var scale = Math.max(this.getScale(), this.server.config.serverMinScale);
         var halfWidth = (this.server.config.serverViewBaseX + 100) / scale / 2;
         var halfHeight = (this.server.config.serverViewBaseY + 100) / scale / 2;
+        if(this.spectate === true){
+            halfWidth += 1000;
+            halfHeight += 1000;
+        }
         this.viewBox = new Quad(
             this.centerPos.x - halfWidth,
             this.centerPos.y - halfHeight,

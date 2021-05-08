@@ -26,7 +26,7 @@ class Server {
 
         // Startup
         this.run = true;
-        this.version = '1.6.2';
+        this.version = '1.6.3';
         this.httpServer = null;
         this.lastNodeId = 1;
         this.lastPlayerId = 1;

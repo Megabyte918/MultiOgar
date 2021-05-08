@@ -1,4 +1,7 @@
 # Changelog
+#### 1.6.3
+* Fixed safe spawning of virus, mother, and player cells
+
 #### 1.6.2
 * Optimised food and virus cell spawning and removal model (no longer use a spawning interval).
 * Removed unused gamemodes.

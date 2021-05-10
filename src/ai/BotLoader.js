@@ -18,7 +18,7 @@ class BotLoader {
         this.botCount = 0;
     }
     addBot() {
-        // Create a FakeSocket instance and assign it's properties.
+        // Create a FakeSocket instance and assign its properties.
         const socket = new FakeSocket(this.server);
         socket.player = new BotPlayer(this.server, socket);
         socket.client = new Client(this.server, socket);
@@ -36,7 +36,7 @@ class BotLoader {
         const maxSize = this.server.config.minionMaxStartSize;
         const defaultSize = this.server.config.minionStartSize;
 
-        // Create a FakeSocket instance and assign it's properties.
+        // Create a FakeSocket instance and assign its properties.
         const socket = new FakeSocket(this.server);
         socket.player = new MinionPlayer(this.server, socket, owner);
         socket.client = new Client(this.server, socket);

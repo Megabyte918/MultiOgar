@@ -664,13 +664,17 @@ class Server {
             this.border.miny + this.border.height * Math.random());
     }
     safeSpawn(cell) {
+        const maxAttempts = 10;
+
         var spawnSuccess = false;
-        while (!spawnSuccess) {
+        var attempts = 0;
+        while (!spawnSuccess && attempts < maxAttempts) {
             if (!this.willCollide(cell)) {
                 spawnSuccess = true;
             }
             else {
                 cell.position = this.randomPos();
+                attempts++;
             }
         }
         this.addNode(cell);

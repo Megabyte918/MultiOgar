@@ -10,18 +10,17 @@ class Experimental extends FFA {
         // Gamemode Specific Variables
         this.nodesMother = [];
         // Config
-        this.motherSpawnInterval = 125; // How many ticks it takes to spawn another mother cell (5 seconds)
-        this.motherMinAmount = 10;
+        this.motherAmount = 10;
     }
     // Gamemode Specific Functions
     spawnMotherCell(server) {
-        // Checks if there are enough mother cells on the map
-        if (this.nodesMother.length >= this.motherMinAmount) {
-            return;
-        }
-        // Spawn if no cells are colliding
         var mother = new Entity.MotherCell(server, null, server.randomPos(), 149);
         server.safeSpawn(mother);
+    }
+    spawnCells(server) {
+        for (var i = 0; i < this.motherAmount; i++) {
+            this.spawnMotherCell(server);
+        }
     }
     // Override
     onServerInit(server) {
@@ -38,13 +37,11 @@ class Experimental extends FFA {
         };
         Entity.MotherCell.prototype.onRemove = function () {
             self.nodesMother.removeUnsorted(this);
+            self.spawnMotherCell(server);
         };
+        self.spawnCells(server);
     }
     onTick(server) {
-        // Mother Cell Spawning
-        if ((server.ticks % this.motherSpawnInterval) === 0) {
-            this.spawnMotherCell(server);
-        }
         var updateInterval;
         for (const motherCell of this.nodesMother) {
             if (motherCell.radius <= motherCell.motherCellMinSize)
